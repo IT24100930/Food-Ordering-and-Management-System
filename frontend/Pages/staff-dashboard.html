@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Dashboard | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold:        #E8A838;
+      --gold-dark:   #C4891A;
+      --gold-light:  #F5C76A;
+      --dark:        #0F0D0A;
+      --dark-mid:    #1C1914;
+      --panel-bg:    #141210;
+      --sidebar-w:   248px;
+      --cream:       #FAF7F2;
+      --cream-dark:  #EDE8DF;
+      --white:       #FFFFFF;
+      --text:        #1C1914;
+      --text-light:  #7A7066;
+      --success:     #2E7D52;
+      --danger:      #C0392B;
+      --shadow:      0 2px 14px rgba(15,13,10,.08);
+      --shadow-lg:   0 20px 60px rgba(15,13,10,.14);
+
+      /* order status palette */
+      --pending-bg:    #FEF3C7; --pending-text:   #92400E; --pending-border: #E8A838;
+      --preparing-bg:  #DBEAFE; --preparing-text: #1E40AF; --preparing-border:#3B82F6;
+      --ready-bg:      #D1FAE5; --ready-text:     #065F46; --ready-border:   #10B981;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Open Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+
+    /* 
+       SIDEBAR
+     */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--panel-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+    /* Orb */
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.14) 0%, transparent 70%);
+      top: -80px; right: -100px;
+      pointer-events: none;
+      filter: blur(30px);
+    }
+    /* Grid */
+    .sidebar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .sidebar > * { position: relative; z-index: 1; }
+
+    /* Logo */
+    .sidebar-logo {
+      padding: 1.55rem 1.4rem 1.25rem;
+      border-bottom: 1px solid rgba(232,168,56,.12);
+    }
+    .brand-logo { display: flex; align-items: center; gap: .6rem; margin-bottom: .62rem; }
+    .brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: var(--dark);
+      box-shadow: 0 3px 14px rgba(232,168,56,.35);
+      flex-shrink: 0;
+    }
+    .brand-text {
+      font-family: 'Open Sans', serif;
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--white); line-height: 1;
+    }
+    .brand-text span { color: var(--gold); }
+    .brand-sub { font-size: .65rem; color: rgba(255,255,255,.3); letter-spacing: .12em; text-transform: uppercase; }
+    .sidebar-role-badge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: rgba(232,168,56,.15); color: var(--gold-light);
+      border: 1px solid rgba(232,168,56,.22);
+      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; padding: .28rem .75rem; border-radius: 999px;
+    }
+
+    /* Nav */
+    .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+    .sidebar-nav::-webkit-scrollbar { width: 3px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(232,168,56,.2); border-radius: 99px; }
+
+    .nav-section {
+      padding: .5rem 1.4rem .2rem; font-size: .65rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-top: .4rem;
+    }
+    .nav-link {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .78rem 1.4rem; color: rgba(255,255,255,.52);
+      font-size: .875rem; font-weight: 500; border-left: 3px solid transparent;
+      transition: all .2s; cursor: pointer;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: var(--gold-light); background: rgba(232,168,56,.08); border-left-color: var(--gold);
+    }
+    .nav-link i { width: 20px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+
+    /* Footer */
+    .sidebar-footer { padding: 1.1rem 1.4rem; border-top: 1px solid rgba(232,168,56,.1); }
+    .sidebar-user { display: flex; align-items: center; gap: .6rem; margin-bottom: .8rem; }
+    .sidebar-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .75rem; color: var(--dark); flex-shrink: 0;
+    }
+    .sidebar-user-name { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user-role { font-size: .68rem; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .06em; }
+    .btn-logout {
+      display: flex; align-items: center; gap: .5rem;
+      color: rgba(255,255,255,.4); font-size: .83rem; font-family: 'Open Sans', sans-serif;
+      cursor: pointer; background: none; border: none; padding: .4rem .5rem;
+      border-radius: 8px; transition: color .2s, background .2s; width: 100%;
+    }
+    .btn-logout:hover { color: #FC8181; background: rgba(252,129,129,.08); }
+
+    /* 
+       MAIN
+     */
+    .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+    /* Topbar */
+    .topbar {
+      height: 64px; background: var(--white);
+      border-bottom: 1px solid var(--cream-dark);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 1px 12px rgba(15,13,10,.06);
+    }
+    .topbar-left { display: flex; align-items: center; gap: .75rem; }
+    .topbar-title {
+      font-size: 1.05rem; font-weight: 700; color: var(--dark);
+      font-family: 'Open Sans', serif; letter-spacing: .01em;
+    }
+    .topbar-divider { width: 1px; height: 22px; background: var(--cream-dark); }
+    .breadcrumb { display: flex; align-items: center; gap: .35rem; font-size: .78rem; color: var(--text-light); }
+    .breadcrumb i { font-size: .7rem; }
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+    .role-pill {
+      display: inline-flex; align-items: center; gap: .38rem;
+      background: rgba(232,168,56,.12); color: var(--gold-dark);
+      border: 1px solid rgba(232,168,56,.22);
+      font-size: .73rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; padding: .28rem .8rem; border-radius: 999px;
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: .55rem;
+      background: var(--cream); border: 1px solid var(--cream-dark);
+      padding: .35rem .9rem .35rem .35rem; border-radius: 999px; cursor: pointer;
+      transition: border-color .2s;
+    }
+    .user-chip:hover { border-color: var(--gold); }
+    .user-chip .avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .75rem; color: var(--dark);
+    }
+    .user-chip .uname { font-size: .83rem; font-weight: 600; color: var(--text); }
+    .btn-topbar-out {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .42rem .95rem;
+      background: transparent;
+      color: var(--text-light);
+      border: 1.5px solid var(--cream-dark);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .82rem; font-weight: 600; border-radius: 10px; cursor: pointer;
+      transition: all .18s;
+    }
+    .btn-topbar-out:hover { border-color: #FC8181; color: var(--danger); background: rgba(192,57,43,.05); }
+
+    /* Page body */
+    .page-body { padding: 2rem; }
+
+    /* Entrance animation */
+    .fade-up { animation: fadeUp .5s ease both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    /*  WELCOME BANNER  */
+    .welcome-banner {
+      background: var(--panel-bg);
+      border-radius: 22px; padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .welcome-banner::before {
+      content: '';
+      position: absolute; width: 380px; height: 380px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.16) 0%, transparent 70%);
+      top: -130px; right: -80px; filter: blur(40px); pointer-events: none;
+    }
+    .welcome-banner::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.04) 1px, transparent 1px);
+      background-size: 52px 52px; pointer-events: none;
+    }
+    .welcome-content { position: relative; z-index: 1; }
+    .welcome-banner h2 {
+      font-family: 'Open Sans', serif;
+      font-size: 1.9rem; font-weight: 700;
+      color: var(--white); line-height: 1.15; margin-bottom: .35rem;
+    }
+    .welcome-banner h2 span { color: var(--gold); }
+    .welcome-banner p { color: rgba(255,255,255,.45); font-size: .88rem; font-weight: 300; }
+    .welcome-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(232,168,56,.18); color: var(--gold-light);
+      border: 1px solid rgba(232,168,56,.3);
+      padding: .32rem .85rem; border-radius: 999px;
+      font-size: .78rem; font-weight: 700; margin-top: .75rem; letter-spacing: .04em;
+    }
+    .welcome-right {
+      position: relative; z-index: 1;
+      font-size: 4.5rem; opacity: .18;
+      animation: staffFloat 4s ease-in-out infinite;
+      color: var(--gold);
+    }
+    @keyframes staffFloat {
+      0%,100% { transform: translateY(0) rotate(-3deg); }
+      50%      { transform: translateY(-12px) rotate(3deg); }
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 1.2rem; margin-bottom: 2rem;
+    }
+    .scard {
+      background: var(--white); border-radius: 18px;
+      padding: 1.35rem 1.4rem;
+      display: flex; align-items: center; gap: 1.1rem;
+      box-shadow: var(--shadow); border: 1px solid transparent;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+    .scard:hover { transform: translateY(-3px); border-color: var(--cream-dark); box-shadow: 0 8px 28px rgba(15,13,10,.10); }
+    .scard-icon {
+      width: 50px; height: 50px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .ic-yellow { background: #FEF3C7; color: #92400E; }
+    .ic-blue   { background: #DBEAFE; color: #1E40AF; }
+    .ic-green  { background: #D1FAE5; color: #065F46; }
+    .ic-red    { background: #FEE2E2; color: #991B1B; }
+    .scard-val {
+      font-size: 1.85rem; font-weight: 800; color: var(--dark); line-height: 1;
+      font-family: 'Open Sans', serif;
+    }
+    .scard-lbl { font-size: .76rem; color: var(--text-light); font-weight: 500; margin-top: .18rem; text-transform: uppercase; letter-spacing: .05em; }
+
+    /*  SECTION HEADER  */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+    .section-title {
+      font-family: 'Open Sans', serif;
+      font-size: 1.4rem; font-weight: 700; color: var(--dark);
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .section-title i { color: var(--gold-dark); font-size: 1.15rem; }
+
+    /*  ORDER CARDS  */
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(278px, 1fr));
+      gap: 1.1rem; margin-bottom: 2.5rem;
+    }
+    .order-card {
+      background: var(--white); border-radius: 16px;
+      padding: 1.25rem; box-shadow: var(--shadow);
+      border-left: 4px solid var(--cream-dark);
+      transition: box-shadow .2s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .order-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 100px; height: 100px; border-radius: 50%;
+      pointer-events: none; opacity: .06; filter: blur(20px);
+    }
+    .order-card:hover { box-shadow: 0 6px 24px rgba(15,13,10,.12); transform: translateY(-2px); }
+
+    .order-card.pending   { border-left-color: var(--pending-border); }
+    .order-card.pending::before { background: #E8A838; }
+    .order-card.preparing { border-left-color: var(--preparing-border); }
+    .order-card.preparing::before { background: #3B82F6; }
+    .order-card.ready     { border-left-color: var(--ready-border); }
+    .order-card.ready::before { background: #10B981; }
+
+    .order-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .85rem;
+    }
+    .order-id { font-weight: 700; font-size: .92rem; color: var(--dark); font-family: 'Open Sans', serif; letter-spacing: .02em; }
+    .order-badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      padding: .22rem .7rem; border-radius: 999px;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .ob-pending   { background: var(--pending-bg);   color: var(--pending-text);   border: 1px solid #FDE68A; }
+    .ob-preparing { background: var(--preparing-bg); color: var(--preparing-text); border: 1px solid #BFDBFE; }
+    .ob-ready     { background: var(--ready-bg);     color: var(--ready-text);     border: 1px solid #A7F3D0; }
+
+    .order-customer {
+      display: flex; align-items: center; gap: .45rem;
+      font-size: .84rem; color: var(--text-light); margin-bottom: .7rem;
+      padding-bottom: .7rem; border-bottom: 1px dashed var(--cream-dark);
+    }
+    .order-customer i { color: var(--gold-dark); }
+
+    .order-items { font-size: .82rem; color: var(--text); margin-bottom: .9rem; line-height: 1.7; }
+    .order-item-row { display: flex; align-items: center; gap: .4rem; }
+    .order-item-row i { color: var(--gold); font-size: .65rem; }
+
+    .order-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: .75rem; border-top: 1px solid var(--cream-dark);
+    }
+    .order-price {
+      font-weight: 700; color: var(--dark); font-size: .95rem;
+      font-family: 'Open Sans', serif;
+    }
+    .order-actions { display: flex; gap: .4rem; }
+
+    /* Order action buttons */
+    .obtn {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .38rem .8rem; border-radius: 9px;
+      font-size: .78rem; font-weight: 700; cursor: pointer;
+      border: 1.5px solid transparent; transition: all .18s;
+      font-family: 'Open Sans', sans-serif;
+    }
+    .obtn-start {
+      background: var(--preparing-bg); color: var(--preparing-text);
+      border-color: #BFDBFE;
+    }
+    .obtn-start:hover { background: #BFDBFE; }
+    .obtn-ready {
+      background: var(--ready-bg); color: var(--ready-text);
+      border-color: #A7F3D0;
+    }
+    .obtn-ready:hover { background: #A7F3D0; }
+    .obtn-served {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--dark); border-color: transparent;
+      box-shadow: 0 3px 10px rgba(232,168,56,.28);
+    }
+    .obtn-served:hover { box-shadow: 0 5px 16px rgba(232,168,56,.38); transform: translateY(-1px); }
+
+    /*  MENU GRID  */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+      gap: 1rem;
+    }
+    .menu-card {
+      background: var(--white); border-radius: 16px; overflow: hidden;
+      box-shadow: var(--shadow); border: 1px solid transparent;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+    .menu-card:hover { transform: translateY(-3px); border-color: var(--cream-dark); box-shadow: 0 8px 24px rgba(15,13,10,.10); }
+
+    .menu-img {
+      height: 88px;
+      background: linear-gradient(135deg, rgba(232,168,56,.12), rgba(232,168,56,.05));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.6rem;
+      border-bottom: 1px solid var(--cream-dark);
+      position: relative; overflow: hidden;
+    }
+     .menu-img img {
+       height: 50px;
+       width: 50px;
+     }
+    .menu-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .menu-body { padding: .9rem 1rem; }
+    .menu-name { font-weight: 700; font-size: .9rem; color: var(--dark); }
+    .menu-price {
+      color: var(--gold-dark); font-weight: 700; font-size: .95rem;
+      margin-top: .2rem; font-family: 'Open Sans', serif;
+    }
+    .menu-cat {
+      display: inline-block; font-size: .72rem; color: var(--text-light);
+      background: var(--cream); padding: .15rem .55rem; border-radius: 999px;
+      border: 1px solid var(--cream-dark); margin-top: .4rem;
+    }
+    .avail-row { display: flex; align-items: center; gap: .4rem; margin-top: .5rem; font-size: .77rem; }
+    .avail-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .avail-dot.yes { background: #10B981; box-shadow: 0 0 0 2px rgba(16,185,129,.2); }
+    .avail-dot.no  { background: #EF4444; box-shadow: 0 0 0 2px rgba(239,68,68,.2); }
+    .avail-yes { color: #065F46; font-weight: 600; }
+    .avail-no  { color: #991B1B; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!--  SIDEBAR  -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand-logo">
+      <div class="brand-icon"><i class="bi bi-fork-knife"></i></div>
+      <div>
+        <div class="brand-text">Urban <span>Plate</span></div>
+        <div class="brand-sub">Restaurant </div>
+      </div>
+    </div>
+    <div class="sidebar-role-badge"><i class="bi bi-person-badge-fill"></i> Staff Panel</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Dashboard</div>
+    <a class="nav-link active" href="staff-dashboard.html">
+      <i class="bi bi-speedometer2"></i> Overview
+    </a>
+
+    <div class="nav-section">Operations</div>
+    <a class="nav-link" href="#orders-section" onclick="smoothScroll('orders-section')">
+      <i class="bi bi-receipt-cutoff"></i> Orders
+    </a>
+    <a class="nav-link" href="#menu-section" onclick="smoothScroll('menu-section')">
+      <i class="bi bi-grid-fill"></i> Menu View
+    </a>
+    <a class="nav-link" href="trust-profile.html">
+      <i class="bi bi-shield-check"></i> Trust Profile
+    </a>
+
+    <!-- <div class="nav-section">Account</div>
+    <a class="nav-link" onclick="doLogout()">
+      <i class="bi bi-box-arrow-left"></i> Logout
+    </a> -->
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">S</div>
+      <div>
+        <div class="sidebar-user-name" id="sidebarUserName">Loading…</div>
+        <div class="sidebar-user-role">Staff Member</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">
+      <i class="bi bi-box-arrow-left"></i> Sign Out
+    </button>
+  </div>
+</div>
+
+
+<!--  MAIN CONTENT  -->
+<div class="main-content">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">
+        <i class="bi bi-shop-window" style="color:var(--gold-dark);margin-right:.35rem;"></i>Urban Plate
+      </div>
+      <div class="topbar-divider"></div>
+      <div class="breadcrumb">
+        <i class="bi bi-house-fill"></i>
+        <i class="bi bi-chevron-right"></i>
+        <span>Staff Dashboard</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="role-pill"><i class="bi bi-person-badge-fill"></i> Staff</div>
+      <div class="user-chip">
+        <div class="avatar" id="topAvatar">S</div>
+        <span class="uname" id="staffName">Staff</span>
+      </div>
+      <button class="btn-topbar-out" onclick="doLogout()">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Page body -->
+  <div class="page-body">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner fade-up">
+      <div class="welcome-content">
+        <h2 id="staffWelcome">Welcome back, <span>Staff</span></h2>
+        <p>Manage today's orders and keep the kitchen running smoothly.</p>
+        <div class="welcome-badge">
+          <i class="bi bi-person-badge-fill"></i> Staff Access
+        </div>
+      </div>
+      <div class="welcome-right"><i class="bi bi-person-badge-fill"></i></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row fade-up" style="animation-delay:.07s;">
+      <div class="scard">
+        <div class="scard-icon ic-yellow"><i class="bi bi-hourglass-split"></i></div>
+        <div>
+          <div class="scard-val">5</div>
+          <div class="scard-lbl">Pending Orders</div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="scard-icon ic-blue"><i class="bi bi-fire"></i></div>
+        <div>
+          <div class="scard-val">3</div>
+          <div class="scard-lbl">In Progress</div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="scard-icon ic-green"><i class="bi bi-check-circle-fill"></i></div>
+        <div>
+          <div class="scard-val">12</div>
+          <div class="scard-lbl">Completed Today</div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="scard-icon ic-red"><i class="bi bi-exclamation-triangle-fill"></i></div>
+        <div>
+          <div class="scard-val">2</div>
+          <div class="scard-lbl">Low Stock Items</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ORDERS SECTION ── -->
+    <div id="orders-section" class="fade-up" style="animation-delay:.13s;">
+      <div class="section-header">
+        <div class="section-title">
+          <i class="bi bi-receipt-cutoff"></i> Active Orders
+        </div>
+      </div>
+      <div class="orders-grid">
+
+        <!-- ORD-001 Pending -->
+        <div class="order-card pending">
+          <div class="order-top">
+            <span class="order-id">#ORD-001</span>
+            <span class="order-badge ob-pending"><i class="bi bi-hourglass-split"></i> Pending</span>
+          </div>
+          <div class="order-customer">
+            <i class="bi bi-person-fill"></i> Table 3 — Nimal Perera
+          </div>
+          <div class="order-items">
+            <div class="order-item-row"><i class="bi bi-dot"></i> Chicken Kottu ×2</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Mango Juice ×2</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Garlic Bread ×1</div>
+          </div>
+          <div class="order-footer">
+            <span class="order-price">Rs. 2,450</span>
+            <div class="order-actions">
+              <button class="obtn obtn-start" onclick="updateStatus(this,'Preparing')">
+                <i class="bi bi-fire"></i> Start
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORD-002 Preparing -->
+        <div class="order-card preparing">
+          <div class="order-top">
+            <span class="order-id">#ORD-002</span>
+            <span class="order-badge ob-preparing"><i class="bi bi-fire"></i> Preparing</span>
+          </div>
+          <div class="order-customer">
+            <i class="bi bi-person-fill"></i> Table 7 — Kamani Silva
+          </div>
+          <div class="order-items">
+            <div class="order-item-row"><i class="bi bi-dot"></i> Margherita Pizza ×1</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Caesar Salad ×1</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Iced Coffee ×2</div>
+          </div>
+          <div class="order-footer">
+            <span class="order-price">Rs. 3,800</span>
+            <div class="order-actions">
+              <button class="obtn obtn-ready" onclick="updateStatus(this,'Ready')">
+                <i class="bi bi-check-circle-fill"></i> Ready
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORD-003 Pending -->
+        <div class="order-card pending">
+          <div class="order-top">
+            <span class="order-id">#ORD-003</span>
+            <span class="order-badge ob-pending"><i class="bi bi-hourglass-split"></i> Pending</span>
+          </div>
+          <div class="order-customer">
+            <i class="bi bi-person-fill"></i> Table 1 — Ruwan Jayasena
+          </div>
+          <div class="order-items">
+            <div class="order-item-row"><i class="bi bi-dot"></i> Rice &amp; Curry ×3</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Coconut Sambol ×3</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Plain Tea ×3</div>
+          </div>
+          <div class="order-footer">
+            <span class="order-price">Rs. 1,950</span>
+            <div class="order-actions">
+              <button class="obtn obtn-start" onclick="updateStatus(this,'Preparing')">
+                <i class="bi bi-fire"></i> Start
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORD-004 Ready -->
+        <div class="order-card ready">
+          <div class="order-top">
+            <span class="order-id">#ORD-004</span>
+            <span class="order-badge ob-ready"><i class="bi bi-check-circle-fill"></i> Ready</span>
+          </div>
+          <div class="order-customer">
+            <i class="bi bi-person-fill"></i> Table 5 — Priya Fernando
+          </div>
+          <div class="order-items">
+            <div class="order-item-row"><i class="bi bi-dot"></i> Grilled Fish ×1</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> French Fries ×1</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Lemonade ×1</div>
+          </div>
+          <div class="order-footer">
+            <span class="order-price">Rs. 2,100</span>
+            <div class="order-actions">
+              <button class="obtn obtn-served" onclick="serveOrder(this)">
+                <i class="bi bi-send-fill"></i> Served
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORD-005 Preparing -->
+        <div class="order-card preparing">
+          <div class="order-top">
+            <span class="order-id">#ORD-005</span>
+            <span class="order-badge ob-preparing"><i class="bi bi-fire"></i> Preparing</span>
+          </div>
+          <div class="order-customer">
+            <i class="bi bi-bag-fill"></i> Takeaway — Malith K.
+          </div>
+          <div class="order-items">
+            <div class="order-item-row"><i class="bi bi-dot"></i> Burger Special ×2</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Onion Rings ×1</div>
+            <div class="order-item-row"><i class="bi bi-dot"></i> Chocolate Shake ×2</div>
+          </div>
+          <div class="order-footer">
+            <span class="order-price">Rs. 3,200</span>
+            <div class="order-actions">
+              <button class="obtn obtn-ready" onclick="updateStatus(this,'Ready')">
+                <i class="bi bi-check-circle-fill"></i> Ready
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── MENU SECTION ── -->
+    <div id="menu-section" class="fade-up" style="animation-delay:.18s;">
+      <div class="section-header">
+        <div class="section-title">
+          <i class="bi bi-grid-fill"></i> Menu Overview
+        </div>
+      </div>
+      <div class="menu-grid">
+
+        <div class="menu-card">
+          <div class="menu-img"><img src="../Images/pizza.png" alt="Pizza"></div>
+          <div class="menu-body">
+            <div class="menu-name">Margherita Pizza</div>
+            <div class="menu-price">Rs. 1,800</div>
+            <span class="menu-cat"><i class="bi bi-tag-fill" style="font-size:.65rem;margin-right:.2rem;"></i>Pizza</span>
+            <div class="avail-row"><div class="avail-dot yes"></div><span class="avail-yes">Available</span></div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div class="menu-img"><img src="../Images/bugger.png" alt="Burger"></div>
+          <div class="menu-body">
+            <div class="menu-name">Burger Special</div>
+            <div class="menu-price">Rs. 950</div>
+            <span class="menu-cat"><i class="bi bi-tag-fill" style="font-size:.65rem;margin-right:.2rem;"></i>Burgers</span>
+            <div class="avail-row"><div class="avail-dot yes"></div><span class="avail-yes">Available</span></div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div class="menu-img"><img src="../Images/rice-curry.png" alt="Rice & Curry"></div>
+          <div class="menu-body">
+            <div class="menu-name">Rice &amp; Curry</div>
+            <div class="menu-price">Rs. 450</div>
+            <span class="menu-cat"><i class="bi bi-tag-fill" style="font-size:.65rem;margin-right:.2rem;"></i>Rice</span>
+            <div class="avail-row"><div class="avail-dot yes"></div><span class="avail-yes">Available</span></div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div class="menu-img"><img src="../Images/fish.png" alt="Grilled Fish"></div>
+          <div class="menu-body">
+            <div class="menu-name">Grilled Fish</div>
+            <div class="menu-price">Rs. 1,400</div>
+            <span class="menu-cat"><i class="bi bi-tag-fill" style="font-size:.65rem;margin-right:.2rem;"></i>Seafood</span>
+            <div class="avail-row"><div class="avail-dot no"></div><span class="avail-no">Out of Stock</span></div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div class="menu-img"><img src="../Images/salad.png" alt="Caesar Salad"></div>
+          <div class="menu-body">
+            <div class="menu-name">Caesar Salad</div>
+            <div class="menu-price">Rs. 750</div>
+            <span class="menu-cat"><i class="bi bi-tag-fill" style="font-size:.65rem;margin-right:.2rem;"></i>Salads</span>
+            <div class="avail-row"><div class="avail-dot yes"></div><span class="avail-yes">Available</span></div>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <div class="menu-img"><img src="../Images/ice-coffee.png" alt="Iced Coffee"></div>
+          <div class="menu-body">
+            <div class="menu-name">Iced Coffee</div>
+            <div class="menu-price">Rs. 380</div>
+            <span class="menu-cat"><i class="bi bi-tag-fill" style="font-size:.65rem;margin-right:.2rem;"></i>Drinks</span>
+            <div class="avail-row"><div class="avail-dot yes"></div><span class="avail-yes">Available</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main-content -->
+
+
+<!--  SCRIPTS  -->
+<script src="../JS/app.js"></script>
+<script>
+  /* ── Init ── */
+  window.onload = () => {
+    const s = getSession();
+    if (!s) return window.location.href = 'login.html';
+    if (s.role !== 'STAFF' && s.role !== 'ADMIN') return window.location.href = 'login.html';
+
+    const initials = getInitials(s.name);
+    document.getElementById('staffWelcome').innerHTML    = `Welcome back, <span>${s.name}</span>`;
+    document.getElementById('staffName').textContent     = s.name;
+    document.getElementById('topAvatar').textContent     = initials;
+    document.getElementById('sidebarAvatar').textContent = initials;
+    document.getElementById('sidebarUserName').textContent = s.name;
+  };
+
+  /* ── Order status transition ── */
+  function updateStatus(btn, newStatus) {
+    const card  = btn.closest('.order-card');
+    const badge = card.querySelector('.order-badge');
+    card.classList.remove('pending', 'preparing', 'ready');
+
+    if (newStatus === 'Preparing') {
+      card.classList.add('preparing');
+      badge.className   = 'order-badge ob-preparing';
+      badge.innerHTML   = '<i class="bi bi-fire"></i> Preparing';
+      btn.className     = 'obtn obtn-ready';
+      btn.innerHTML     = '<i class="bi bi-check-circle-fill"></i> Ready';
+      btn.onclick       = () => updateStatus(btn, 'Ready');
+    } else {
+      card.classList.add('ready');
+      badge.className   = 'order-badge ob-ready';
+      badge.innerHTML   = '<i class="bi bi-check-circle-fill"></i> Ready';
+      btn.className     = 'obtn obtn-served';
+      btn.innerHTML     = '<i class="bi bi-send-fill"></i> Served';
+      btn.onclick       = () => serveOrder(btn);
+    }
+  }
+
+  /* ── Mark as served (remove card) ── */
+  function serveOrder(btn) {
+    const card = btn.closest('.order-card');
+    card.style.transition = 'opacity .3s ease, transform .3s ease';
+    card.style.opacity    = '0';
+    card.style.transform  = 'scale(.95)';
+    setTimeout(() => card.remove(), 300);
+  }
+
+  /* ── Smooth scroll ── */
+  function smoothScroll(id) {
+    event.preventDefault();
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ── Logout ── */
+  async function doLogout() {
+    try { await API.logout(); } catch(e) {}
+    clearSession();
+    window.location.href = 'home.html';
+  }
+</script>
+</body>
+</html>

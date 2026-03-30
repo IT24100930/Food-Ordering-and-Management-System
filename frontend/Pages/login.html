@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold:        #E8A838;
+      --gold-dark:   #C4891A;
+      --gold-light:  #F5C76A;
+      --dark:        #0F0D0A;
+      --dark-mid:    #1C1914;
+      --panel-bg:    #141210;
+      --cream:       #FAF7F2;
+      --cream-dark:  #EDE8DF;
+      --white:       #FFFFFF;
+      --text:        #1C1914;
+      --text-light:  #7A7066;
+      --success:     #2E7D52;
+      --error:       #C0392B;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      font-family: 'Open Sans', sans-serif;
+      background: var(--cream);
+      overflow: hidden;
+    }
+
+    a { text-decoration: none; }
+
+    /* ─── LEFT PANEL  */
+    .left-panel {
+      flex: 1;
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 3.5rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Mesh gradient orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(232,168,56,.22) 0%, transparent 70%);
+      top: -160px; right: -160px;
+    }
+    .orb-2 {
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(232,168,56,.10) 0%, transparent 70%);
+      bottom: -100px; left: -80px;
+    }
+    .orb-3 {
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(245,199,106,.08) 0%, transparent 70%);
+      top: 45%; left: 30%;
+    }
+
+    /* Noise texture overlay */
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: .4;
+    }
+
+    /* Decorative grid lines */
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .panel-top, .panel-mid, .panel-bottom { position: relative; z-index: 1; }
+
+    /* Logo */
+    .panel-logo {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .logo-icon-wrap {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--dark);
+      box-shadow: 0 4px 20px rgba(232,168,56,.35);
+    }
+    .logo-text {
+      font-family: 'Open Sans', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+      color: var(--white);
+      line-height: 1;
+    }
+    .logo-text span { color: var(--gold); }
+    .logo-sub {
+      font-size: .72rem;
+      font-weight: 400;
+      color: rgba(255,255,255,.35);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-top: .15rem;
+    }
+
+    /* Center showcase */
+    .panel-mid { width: 100%; }
+
+    .dish-showcase {
+      margin-bottom: 2.8rem;
+    }
+    .dish-icon {
+      font-size: 6rem;
+      line-height: 1;
+      display: block;
+      margin-bottom: 1.8rem;
+      animation: dishFloat 4s ease-in-out infinite;
+      filter: drop-shadow(0 12px 40px rgba(232,168,56,.25));
+    }
+    @keyframes dishFloat {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50%       { transform: translateY(-14px) rotate(2deg); }
+    }
+
+    .panel-headline {
+      font-family: 'Open Sans', serif;
+      font-size: 3.4rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -.01em;
+    }
+    .panel-headline em {
+      font-style: italic;
+      color: var(--gold);
+      display: block;
+    }
+    .panel-desc {
+      color: rgba(255,255,255,.45);
+      font-size: .9rem;
+      line-height: 1.75;
+      max-width: 360px;
+      font-weight: 300;
+    }
+
+    /* Feature pills */
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: 2.2rem;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .4rem .85rem .4rem .55rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 999px;
+      color: rgba(255,255,255,.65);
+      font-size: .8rem;
+      font-weight: 400;
+      backdrop-filter: blur(4px);
+      transition: background .2s, border-color .2s;
+    }
+    .pill:hover { background: rgba(232,168,56,.12); border-color: rgba(232,168,56,.25); color: var(--gold-light); }
+    .pill i { color: var(--gold); font-size: .85rem; }
+
+    /* Bottom stat bar */
+    .stat-bar {
+      display: flex;
+      gap: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .stat { }
+    .stat-num {
+      font-family: 'Open Sans', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-lbl {
+      font-size: .72rem;
+      color: rgba(255,255,255,.35);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-top: .2rem;
+    }
+
+    /* ─── RIGHT PANEL  */
+    .right-panel {
+      width: 500px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+      background: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle decorative corner */
+    .right-panel::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .right-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 390px;
+      position: relative;
+      z-index: 1;
+      animation: boxSlideUp .55s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes boxSlideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header */
+    .login-header { margin-bottom: 2rem; }
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: linear-gradient(90deg, rgba(232,168,56,.12), rgba(232,168,56,.06));
+      border: 1px solid rgba(232,168,56,.2);
+      border-radius: 999px;
+      padding: .25rem .75rem;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--gold-dark);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .welcome-badge i { font-size: .8rem; }
+    .login-box h2 {
+      font-family: 'Open Sans', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.1;
+      margin-bottom: .35rem;
+    }
+    .login-box h2 span { color: var(--gold-dark); }
+    .login-box p.subtitle {
+      color: var(--text-light);
+      font-size: .88rem;
+      font-weight: 300;
+    }
+
+    /* Alert box */
+    #alert-box {
+      display: none;
+      padding: .75rem 1rem;
+      border-radius: 10px;
+      font-size: .85rem;
+      font-weight: 500;
+      margin-bottom: 1.2rem;
+      border-left: 4px solid transparent;
+      animation: alertIn .3s ease;
+    }
+    @keyframes alertIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    #alert-box.success { background: rgba(46,125,82,.08); border-color: var(--success); color: var(--success); }
+    #alert-box.error   { background: rgba(192,57,43,.08);  border-color: var(--error);   color: var(--error); }
+
+    /* Form groups */
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: .45rem;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-light);
+      font-size: 1rem;
+      pointer-events: none;
+      z-index: 2;
+      transition: color .2s;
+    }
+    .input-wrap:focus-within .input-icon { color: var(--gold-dark); }
+
+    .form-control {
+      width: 100%;
+      height: 48px;
+      padding: 0 44px 0 42px;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 12px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: .9rem;
+      color: var(--text);
+      background: var(--cream);
+      outline: none;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+    }
+    .form-control::placeholder { color: #B8B0A6; }
+    .form-control:focus {
+      border-color: var(--gold);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(232,168,56,.1);
+    }
+    .form-control:focus + .input-icon { color: var(--gold-dark); }
+
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: 1rem;
+      z-index: 2;
+      transition: color .2s;
+      display: flex;
+      align-items: center;
+    }
+    .toggle-pw:hover { color: var(--gold-dark); }
+
+    /* Row */
+    .links-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: .5rem;
+    }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      cursor: pointer;
+      font-size: .83rem;
+      color: var(--text-light);
+      user-select: none;
+    }
+    .remember-label input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: background .15s, border-color .15s;
+    }
+    .remember-label input[type="checkbox"]:checked {
+      background: var(--gold-dark);
+      border-color: var(--gold-dark);
+    }
+    .remember-label input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: -1px; left: 1px;
+      font-size: .7rem;
+      color: white;
+      font-weight: 700;
+    }
+    .forgot-link {
+      font-size: .83rem;
+      font-weight: 600;
+      color: var(--gold-dark);
+      transition: color .2s;
+    }
+    .forgot-link:hover { color: var(--gold); text-decoration: underline; }
+
+    /* Submit button */
+    .btn-signin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      width: 100%;
+      height: 50px;
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--dark);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 13px;
+      cursor: pointer;
+      letter-spacing: .03em;
+      box-shadow: 0 6px 24px rgba(232,168,56,.35);
+      transition: transform .18s, box-shadow .18s, opacity .18s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-signin::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .btn-signin:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(232,168,56,.45);
+    }
+    .btn-signin:active:not(:disabled) { transform: translateY(0); }
+    .btn-signin:disabled { opacity: .7; cursor: not-allowed; }
+    .btn-signin .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(15,13,10,.3);
+      border-top-color: var(--dark);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .btn-signin.loading .spinner { display: block; }
+    .btn-signin.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin: 1.4rem 0 1.2rem;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--cream-dark); }
+    .divider-text { font-size: .78rem; color: var(--text-light); white-space: nowrap; }
+
+    /* Register prompt */
+    .register-prompt {
+      text-align: center;
+      font-size: .85rem;
+      color: var(--text-light);
+      margin-top: 1.4rem;
+    }
+    .register-prompt a { color: var(--gold-dark); font-weight: 700; }
+    .register-prompt a:hover { text-decoration: underline; }
+
+    /* Demo credentials box */
+    .demo-box {
+      background: linear-gradient(135deg, rgba(232,168,56,.08), rgba(232,168,56,.04));
+      border: 1px solid rgba(232,168,56,.18);
+      border-radius: 12px;
+      padding: .9rem 1rem;
+      margin-bottom: 1.4rem;
+      font-size: .82rem;
+      color: var(--text-light);
+    }
+    .demo-box strong {
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      margin-bottom: .5rem;
+      font-size: .8rem;
+    }
+    .demo-cred {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+    }
+    .demo-cred span {
+      cursor: pointer;
+      color: var(--gold-dark);
+      font-weight: 600;
+      padding: .2rem .65rem;
+      background: rgba(232,168,56,.1);
+      border-radius: 6px;
+      transition: background .15s;
+    }
+    .demo-cred span:hover { background: rgba(232,168,56,.2); text-decoration: underline; }
+
+    /*  RESPONSIVE  */
+    @media (max-width: 960px) {
+      .left-panel { display: none; }
+      .right-panel {
+        width: 100%;
+        background: var(--cream);
+      }
+      body { overflow: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT PANEL ═══ -->
+  <div class="left-panel">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-lines"></div>
+
+    <!-- Top: Logo -->
+    <div class="panel-top">
+      <a href="home.html">
+      <div class="panel-logo">
+        <div class="logo-icon-wrap"><i class="bi bi-fork-knife"></i></div>
+        <div>
+          <div class="logo-text">Urban <span>Plate</span></div>
+          <div class="logo-sub">Restaurant </div>
+        </div>
+      </div>
+      </a>
+    </div>
+
+    <!-- Mid: Showcase -->
+    <div class="panel-mid">
+      <div class="dish-showcase">
+        <!-- <span class="dish-icon">🍽️</span> -->
+        <h1 class="panel-headline">
+          Manage Your<br>
+          <em>Culinary Empire</em>
+        </h1>
+        <p class="panel-desc">All-in-one restaurant — from live orders and smart menus to instant billing and real-time inventory.</p>
+      </div>
+
+      <div class="feature-pills">
+        <!-- <div class="pill"><i class="bi bi-person-badge"></i> Role-Based Access</div> -->
+        <div class="pill"><i class="bi bi-receipt-cutoff"></i> Smart Orders</div>
+        <div class="pill"><i class="bi bi-credit-card-2-front"></i> Auto Billing</div>
+        <div class="pill"><i class="bi bi-boxes"></i> Inventory Tracking</div>
+        <div class="pill"><i class="bi bi-graph-up-arrow"></i> Analytics</div>
+        <div class="pill"><i class="bi bi-clock-history"></i> Real-Time Updates</div>
+      </div>
+    </div>
+
+    <!-- Bottom: Stats -->
+    <!-- <div class="panel-bottom">
+      <div class="stat-bar">
+        <div class="stat">
+          <div class="stat-num">99.9<small style="font-size:1.1rem">%</small></div>
+          <div class="stat-lbl">Uptime</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">3x</div>
+          <div class="stat-lbl">Faster Orders</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">0</div>
+          <div class="stat-lbl">Billing Errors</div>
+        </div>
+      </div>
+    </div> -->
+  </div>
+
+
+  <!-- RIGHT PANEL  -->
+  <div class="right-panel">
+    <div class="login-box">
+
+      <!-- Header -->
+      <div class="login-header">
+        <div class="welcome-badge"><i class="bi bi-stars"></i> Welcome Back</div>
+        <h2>Sign in to<br><span>Urban Plate</span></h2>
+        <p class="subtitle">Enter your credentials to access.</p>
+      </div>
+
+      <!-- Demo credentials (commented-out originally, preserved) -->
+      <!-- <div class="demo-box">
+        <strong><i class="bi bi-flask"></i> Demo Credentials (click to fill)</strong>
+        <div class="demo-cred">
+          <span onclick="fillCreds('admin@urbanplate.com','Admin@123')">Admin</span>
+          <span onclick="fillCreds('staff@urbanplate.com','Staff@123')">Staff</span>
+          <span onclick="fillCreds('customer@urbanplate.com','Customer@123')">Customer</span>
+        </div>
+      </div> -->
+
+      <!-- Alert -->
+      <div id="alert-box" class="alert" style="display:none;"></div>
+
+      <!-- Form -->
+      <form id="loginForm" novalidate>
+
+        <div class="form-group">
+          <label for="email"><i class="bi bi-envelope" style="margin-right:.3rem;"></i>Email Address</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope-at input-icon"></i>
+            <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password"><i class="bi bi-lock" style="margin-right:.3rem;"></i>Password</label>
+          <div class="input-wrap">
+            <i class="bi bi-person-lock input-icon"></i>
+            <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+            <span class="toggle-pw" onclick="togglePassword('password', this)"><i class="bi bi-eye-fill"></i></span>
+          </div>
+        </div>
+
+        <div class="links-row">
+          <label class="remember-label">
+            <input type="checkbox" id="remember"> Remember me
+          </label>
+          <a href="forgot-password.html" class="forgot-link">
+            <i class="bi bi-question-circle" style="margin-right:.25rem;font-size:.8rem;"></i>Forgot Password?
+          </a>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn-signin">
+          <div class="spinner"></div>
+          <span class="btn-text"><i class="bi bi-box-arrow-in-right"></i>&nbsp; Sign In</span>
+        </button>
+
+      </form>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">New to Urban Plate?</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="register-prompt">
+        Don't have an account? <a href="register.html"><i class="bi bi-person-plus" style="font-size:.8rem;"></i> Register here</a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script src="../JS/app.js"></script>
+  <script>
+    /* ── Session redirect ── */
+    const existing = getSession();
+    if (existing) redirectByRole(existing.role);
+
+    function fillCreds(email, pw) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = pw;
+    }
+
+    function redirectByRole(role) {
+      if (role === 'ADMIN')       window.location.href = 'dashboard.html';
+      else if (role === 'STAFF')  window.location.href = 'staff-dashboard.html';
+      else                        window.location.href = 'customer-home.html';
+    }
+
+    /* ── Toggle password visibility ── */
+    function togglePassword(fieldId, iconEl) {
+      const input = document.getElementById(fieldId);
+      const isText = input.type === 'text';
+      input.type = isText ? 'password' : 'text';
+      const icon = iconEl.querySelector('i');
+      icon.classList.toggle('bi-eye-fill', isText);
+      icon.classList.toggle('bi-eye-slash-fill', !isText);
+    }
+
+    /* ── Alert helpers ── */
+    function showAlert(box, msg, type) {
+      box.textContent = msg;
+      box.className = `alert ${type}`;
+      box.style.display = 'block';
+    }
+    function hideAlert(box) {
+      box.style.display = 'none';
+    }
+
+    /* ── Loading state helper ── */
+    function setLoading(btn, state, label) {
+      btn.disabled = state;
+      btn.classList.toggle('loading', state);
+      if (!state && label) {
+        btn.querySelector('.btn-text').innerHTML = `<i class="bi bi-box-arrow-in-right"></i>&nbsp; ${label}`;
+      }
+    }
+
+    /* ── Form submit ── */
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alertBox = document.getElementById('alert-box');
+      const btn      = document.getElementById('loginBtn');
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) return showAlert(alertBox, 'Please enter email and password.', 'error');
+
+      setLoading(btn, true);
+      hideAlert(alertBox);
+
+      try {
+        const res = await API.login({ email, password });
+        if (res.success) {
+          setSession({ name: res.name, role: res.role, userId: res.userId, email });
+          showAlert(alertBox, `Welcome back, ${res.name}! Redirecting…`, 'success');
+          const came = document.referrer.includes('home.html');
+          setTimeout(() => {
+            if (came) window.location.href = 'home.html';
+            else redirectByRole(res.role);
+          }, 900);
+        } else {
+          showAlert(alertBox, res.message || 'Invalid email or password.', 'error');
+          setLoading(btn, false, 'Sign In');
+        }
+      } catch (err) {
+        showAlert(alertBox, 'Connection error. Is the server running?', 'error');
+        setLoading(btn, false, 'Sign In');
+      }
+    });
+  </script>
+</body>
+</html>

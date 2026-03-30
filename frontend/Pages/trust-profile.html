@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trust Profile | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold:        #E8A838;
+      --gold-dark:   #C4891A;
+      --gold-light:  #F5C76A;
+      --dark:        #0F0D0A;
+      --dark-mid:    #1C1914;
+      --panel-bg:    #141210;
+      --cream:       #FAF7F2;
+      --cream-dark:  #EDE8DF;
+      --white:       #FFFFFF;
+      --text:        #1C1914;
+      --text-light:  #7A7066;
+      --success:     #2E7D52;
+      --danger:      #C0392B;
+      --shadow:      0 2px 14px rgba(15,13,10,.08);
+      --shadow-lg:   0 20px 60px rgba(15,13,10,.14);
+
+      /* trust-level colours */
+      --high-bg:       rgba(16,185,129,.14); --high-text:   #34D399; --high-border:  rgba(16,185,129,.3);
+      --normal-bg:     rgba(59,130,246,.14); --normal-text: #93C5FD; --normal-border:rgba(59,130,246,.3);
+      --warning-bg:    rgba(232,168,56,.14); --warning-text:#FCD34D; --warning-border:rgba(232,168,56,.3);
+      --restrict-bg:   rgba(239,68,68,.14);  --restrict-text:#FCA5A5;--restrict-border:rgba(239,68,68,.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--panel-bg);
+      color: rgba(255,255,255,.85);
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* 
+       TOPBAR
+     */
+    .topbar {
+      height: 64px;
+      background: var(--dark-mid);
+      border-bottom: 1px solid rgba(232,168,56,.1);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 16px rgba(15,13,10,.3);
+    }
+
+    .topbar-brand {
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .brand-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .95rem; color: var(--dark);
+      box-shadow: 0 3px 12px rgba(232,168,56,.32);
+    }
+    .brand-text {
+      font-family: 'Open Sans', serif;
+      font-size: 1.35rem; font-weight: 700; color: var(--white); line-height: 1;
+    }
+    .brand-text span { color: var(--gold); }
+    .brand-sub { font-size: .65rem; color: rgba(255,255,255,.3); letter-spacing: .1em; text-transform: uppercase; }
+
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      color: rgba(255,255,255,.55); font-size: .84rem; font-weight: 500;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      padding: .4rem .9rem; border-radius: 9px; cursor: pointer;
+      transition: all .2s;
+    }
+    .back-btn:hover { color: var(--white); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.2); }
+    .back-btn i { font-size: .85rem; }
+
+    /* ─────────────────────────────────────────────────
+       PAGE LAYOUT
+    ───────────────────────────────────────────────── */
+    .page { max-width: 1120px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+
+    /* Loading state */
+    .loading-state {
+      text-align: center; padding: 5rem 2rem;
+      color: rgba(255,255,255,.35);
+    }
+    .loading-state i {
+      font-size: 2.5rem; display: block; margin-bottom: 1rem;
+      animation: spinAnim .9s linear infinite;
+      color: var(--gold);
+    }
+    @keyframes spinAnim { to { transform: rotate(360deg); } }
+
+    /* ─────────────────────────────────────────────────
+       SCORE HERO CARD
+    ───────────────────────────────────────────────── */
+    .score-hero {
+      background: var(--dark-mid);
+      border: 1px solid rgba(232,168,56,.12);
+      border-radius: 24px; padding: 2.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center; gap: 2.5rem;
+      margin-bottom: 1.5rem;
+      position: relative; overflow: hidden;
+      animation: fadeUp .5s ease both;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Orb decoration */
+    .score-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.12) 0%, transparent 70%);
+      filter: blur(40px); pointer-events: none;
+    }
+    .score-hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.03) 1px, transparent 1px);
+      background-size: 48px 48px; pointer-events: none;
+    }
+
+    /* ── Circular gauge ── */
+    .score-circle {
+      position: relative; width: 148px; height: 148px; flex-shrink: 0;
+      position: relative; z-index: 1;
+    }
+    .score-circle svg { transform: rotate(-90deg); }
+    .score-circle .track { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 10; }
+    .score-circle .fill  {
+      fill: none; stroke-width: 10; stroke-linecap: round;
+      transition: stroke-dashoffset 1.3s cubic-bezier(.22,.68,0,1.1);
+    }
+    .score-text {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+    }
+    .score-num { font-family: 'Open Sans', serif; font-size: 2.6rem; font-weight: 700; line-height: 1; }
+    .score-max { font-size: .7rem; color: rgba(255,255,255,.35); }
+    .score-lbl { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-top: .15rem; }
+
+    /* ── Hero info ── */
+    .hero-info { position: relative; z-index: 1; }
+    .hero-name {
+      font-family: 'Open Sans', serif;
+      font-size: 1.75rem; color: var(--white); font-weight: 700; margin-bottom: .3rem;
+    }
+    .hero-email { color: rgba(255,255,255,.45); font-size: .88rem; margin-bottom: 1rem; display: flex; align-items: center; gap: .35rem; }
+    .hero-email i { color: rgba(255,255,255,.3); }
+
+    .hero-badges { display: flex; gap: .55rem; flex-wrap: wrap; }
+    .hbadge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .28rem .75rem; border-radius: 999px;
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    }
+    .hb-role     { background: rgba(232,168,56,.14); color: var(--gold-light); border: 1px solid rgba(232,168,56,.28); }
+    .hb-high     { background: var(--high-bg);    color: var(--high-text);    border: 1px solid var(--high-border); }
+    .hb-normal   { background: var(--normal-bg);  color: var(--normal-text);  border: 1px solid var(--normal-border); }
+    .hb-warning  { background: var(--warning-bg); color: var(--warning-text); border: 1px solid var(--warning-border); }
+    .hb-restrict { background: var(--restrict-bg);color: var(--restrict-text);border: 1px solid var(--restrict-border); }
+    .hb-restricted { background: rgba(239,68,68,.2); color: #F87171; border: 1px solid rgba(239,68,68,.4); }
+
+    /* Restricted warning */
+    .restricted-warning {
+      display: none;
+      margin-top: .9rem;
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.28);
+      border-radius: 11px; padding: .75rem 1rem;
+      color: #FCA5A5; font-size: .83rem;
+      display: none; align-items: center; gap: .5rem;
+    }
+    .restricted-warning i { font-size: 1rem; flex-shrink: 0; }
+
+    /* ── Hero right ── */
+    .hero-right {
+      text-align: right; position: relative; z-index: 1;
+    }
+    .level-icon-wrap {
+      width: 72px; height: 72px;
+      background: rgba(232,168,56,.1); border: 1.5px solid rgba(232,168,56,.2);
+      border-radius: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: var(--gold);
+      margin-bottom: .6rem;
+      box-shadow: 0 6px 24px rgba(232,168,56,.14);
+    }
+    .hero-right-label { color: rgba(255,255,255,.35); font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+
+    /* ─────────────────────────────────────────────────
+       METRICS GRID
+    ───────────────────────────────────────────────── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: var(--dark-mid);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 16px; padding: 1.25rem;
+      transition: border-color .2s, transform .2s;
+      animation: fadeUp .5s ease both;
+    }
+    .metric-card:hover { border-color: rgba(232,168,56,.2); transform: translateY(-2px); }
+    .metric-icon-wrap {
+      width: 42px; height: 42px; border-radius: 11px;
+      background: rgba(232,168,56,.1); border: 1px solid rgba(232,168,56,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--gold); margin-bottom: .75rem;
+    }
+    .metric-val {
+      font-family: 'Open Sans', serif;
+      font-size: 1.6rem; font-weight: 700; color: var(--white); line-height: 1;
+    }
+    .metric-lbl { font-size: .75rem; color: rgba(255,255,255,.4); margin-top: .25rem; text-transform: uppercase; letter-spacing: .05em; }
+
+    /* ─────────────────────────────────────────────────
+       SECTION TITLE
+    ───────────────────────────────────────────────── */
+    .section-title {
+      font-family: 'Open Sans', serif;
+      font-size: 1.15rem; font-weight: 700; color: var(--white);
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .section-title i { color: var(--gold-dark); font-size: 1rem; }
+
+    /* ─────────────────────────────────────────────────
+       PROMOTION CARD
+    ───────────────────────────────────────────────── */
+    .promo-card {
+      background: var(--dark-mid);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px; padding: 1.8rem;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .5s ease .1s both;
+    }
+    .promo-card.eligible {
+      border-color: rgba(16,185,129,.35);
+      background: rgba(16,185,129,.04);
+    }
+    .promo-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 1.4rem; gap: 1rem;
+    }
+    .promo-title {
+      font-family: 'Open Sans', serif;
+      font-size: 1.15rem; color: var(--white); font-weight: 700;
+    }
+    .promo-card.eligible .promo-title { color: #34D399; }
+    .promo-subtitle { color: rgba(255,255,255,.4); font-size: .82rem; margin-top: .2rem; }
+
+    .promo-eligible-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(16,185,129,.18); color: #34D399;
+      border: 1px solid rgba(16,185,129,.35);
+      padding: .32rem .85rem; border-radius: 999px;
+      font-size: .75rem; font-weight: 700; white-space: nowrap;
+    }
+
+    /* Criteria list */
+    .criteria-list { display: flex; flex-direction: column; gap: .75rem; }
+    .criterion {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+    .crit-left { display: flex; align-items: center; gap: .7rem; }
+    .crit-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .88rem; flex-shrink: 0;
+    }
+    .crit-icon.met  { background: rgba(16,185,129,.18); color: #34D399; }
+    .crit-icon.miss { background: rgba(239,68,68,.14);  color: #F87171; }
+    .crit-label { font-size: .88rem; color: rgba(255,255,255,.68); }
+    .crit-value { font-size: .84rem; font-weight: 700; }
+    .crit-value.met  { color: #34D399; }
+    .crit-value.miss { color: #F87171; }
+
+    /* Progress bar */
+    .promo-bar-wrap { margin-top: 1.3rem; }
+    .promo-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: .78rem; color: rgba(255,255,255,.38); margin-bottom: .45rem;
+    }
+    .promo-bar {
+      height: 7px; background: rgba(255,255,255,.08);
+      border-radius: 999px; overflow: hidden;
+    }
+    .promo-bar-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold), #34D399);
+      transition: width 1.1s cubic-bezier(.22,.68,0,1.1);
+    }
+
+    /* ─────────────────────────────────────────────────
+       DEMO EVENTS PANEL
+    ───────────────────────────────────────────────── */
+    .demo-panel {
+      background: var(--dark-mid);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px; padding: 1.6rem;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .5s ease .15s both;
+    }
+    .demo-header {
+      display: flex; align-items: center; gap: .5rem;
+      margin-bottom: 1.1rem;
+    }
+    .demo-header-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(232,168,56,.12); border: 1px solid rgba(232,168,56,.2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: .88rem;
+    }
+    .demo-header-title {
+      font-size: .95rem; font-weight: 700; color: rgba(255,255,255,.75);
+    }
+    .demo-header-sub {
+      font-size: .75rem; color: rgba(255,255,255,.3); font-weight: 400; margin-left: .4rem;
+    }
+    .event-btns { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .evbtn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .52rem 1rem; border-radius: 10px;
+      font-size: .82rem; font-weight: 600; cursor: pointer;
+      border: 1.5px solid transparent; transition: all .18s;
+      font-family: 'Open Sans', sans-serif;
+    }
+    .ev-green  { background: rgba(16,185,129,.14); color: #34D399; border-color: rgba(16,185,129,.25); }
+    .ev-green:hover  { background: rgba(16,185,129,.26); }
+    .ev-red    { background: rgba(239,68,68,.12);  color: #F87171; border-color: rgba(239,68,68,.22); }
+    .ev-red:hover    { background: rgba(239,68,68,.22); }
+    .ev-blue   { background: rgba(59,130,246,.12); color: #93C5FD; border-color: rgba(59,130,246,.22); }
+    .ev-blue:hover   { background: rgba(59,130,246,.22); }
+    .ev-yellow { background: rgba(232,168,56,.12); color: var(--gold-light); border-color: rgba(232,168,56,.22); }
+    .ev-yellow:hover { background: rgba(232,168,56,.22); }
+
+    /* ─────────────────────────────────────────────────
+       ADMIN PANEL
+    ───────────────────────────────────────────────── */
+    .admin-panel {
+      background: var(--dark-mid);
+      border: 1px solid rgba(232,168,56,.2);
+      border-radius: 20px; padding: 1.8rem;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .5s ease .2s both;
+    }
+    .admin-panel-header {
+      display: flex; align-items: center; gap: .6rem; margin-bottom: 1.3rem;
+    }
+    .admin-panel-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(232,168,56,.15); border: 1px solid rgba(232,168,56,.25);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 1rem;
+    }
+    .admin-panel-title {
+      font-family: 'Open Sans', serif;
+      font-size: 1.1rem; color: var(--gold-light); font-weight: 700;
+    }
+    .admin-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .admin-input {
+      flex: 1; min-width: 220px;
+      background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: .72rem 1rem;
+      color: var(--white); font-family: 'Open Sans', sans-serif; font-size: .88rem;
+      outline: none; transition: border-color .2s;
+    }
+    .admin-input:focus { border-color: var(--gold); }
+    .admin-input::placeholder { color: rgba(255,255,255,.28); }
+    .abtn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .72rem 1.2rem; border-radius: 10px;
+      font-family: 'Open Sans', sans-serif; font-size: .85rem; font-weight: 700;
+      cursor: pointer; border: 1.5px solid transparent; transition: all .18s;
+    }
+    .abtn-up   { background: rgba(16,185,129,.16); color: #34D399; border-color: rgba(16,185,129,.28); }
+    .abtn-up:hover   { background: rgba(16,185,129,.28); }
+    .abtn-down { background: rgba(239,68,68,.12);  color: #F87171; border-color: rgba(239,68,68,.25); }
+    .abtn-down:hover { background: rgba(239,68,68,.24); }
+
+    /* ─────────────────────────────────────────────────
+       TWO COLUMN HISTORY
+    ───────────────────────────────────────────────── */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+      animation: fadeUp .5s ease .22s both;
+    }
+
+    .history-list { display: flex; flex-direction: column; gap: .5rem; }
+
+    .history-item {
+      background: var(--dark-mid);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 13px; padding: .9rem 1.1rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: border-color .2s;
+    }
+    .history-item:hover { border-color: rgba(232,168,56,.15); }
+
+    .hist-change {
+      font-family: 'Open Sans', serif;
+      font-size: 1.1rem; font-weight: 800;
+      min-width: 48px; text-align: center;
+    }
+    .hist-change.pos { color: #34D399; }
+    .hist-change.neg { color: #F87171; }
+    .hist-info { flex: 1; }
+    .hist-reason { font-size: .87rem; color: rgba(255,255,255,.72); }
+    .hist-type   { font-size: .74rem; color: rgba(255,255,255,.32); margin-top: .1rem; }
+    .hist-meta   { text-align: right; }
+    .hist-score  { font-size: .8rem; color: rgba(255,255,255,.38); }
+    .hist-date   { font-size: .73rem; color: rgba(255,255,255,.24); margin-top: .15rem; }
+
+    /* Role history */
+    .role-hist-item {
+      background: var(--dark-mid);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 13px; padding: .9rem 1.1rem;
+      display: flex; align-items: center; gap: .85rem;
+      transition: border-color .2s;
+    }
+    .role-hist-item:hover { border-color: rgba(232,168,56,.15); }
+    .rh-icon { color: var(--gold); font-size: 1.1rem; flex-shrink: 0; }
+    .rh-roles { flex: 1; }
+    .rh-change { font-size: .9rem; color: var(--white); font-weight: 600; }
+    .rh-by     { font-size: .74rem; color: rgba(255,255,255,.32); margin-top: .12rem; }
+    .rh-reason { font-size: .78rem; color: rgba(255,255,255,.48); }
+    .rh-date   { font-size: .73rem; color: rgba(255,255,255,.25); text-align: right; white-space: nowrap; }
+
+    /* Empty state */
+    .empty-history {
+      color: rgba(255,255,255,.28); font-size: .85rem;
+      padding: 1.2rem; text-align: center;
+      display: flex; align-items: center; justify-content: center; gap: .4rem;
+    }
+
+    /* ─────────────────────────────────────────────────
+       TOAST
+    ───────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--dark-mid); border: 1px solid rgba(232,168,56,.15);
+      color: var(--white); padding: .85rem 1.6rem; border-radius: 13px;
+      font-size: .88rem; font-weight: 600; z-index: 300;
+      transition: transform .32s cubic-bezier(.22,.68,0,1.1);
+      display: flex; align-items: center; gap: .55rem;
+      box-shadow: 0 8px 32px rgba(15,13,10,.35);
+      white-space: nowrap; max-width: 90vw;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast i { color: var(--gold); font-size: .95rem; }
+
+    /* ─────────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .score-hero { grid-template-columns: 1fr; text-align: center; gap: 1.5rem; }
+      .hero-badges { justify-content: center; }
+      .hero-email { justify-content: center; }
+      .hero-right { text-align: center; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page { padding: 1.5rem 1rem 3rem; }
+      .score-hero { padding: 1.8rem 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!--  TOPBAR  -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon"><i class="bi bi-fork-knife"></i></div>
+      <div>
+        <div class="brand-text">Urban <span>Plate</span></div>
+        <div class="brand-sub">Trust Profile</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a class="back-btn" id="backBtn" href="#">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+
+  <!--  PAGE  -->
+  <div class="page">
+
+    <!-- Loading state -->
+    <div class="loading-state" id="loadingState">
+      <i class="bi bi-arrow-repeat"></i>
+      Loading trust profile…
+    </div>
+
+    <!-- Main content — hidden until data loaded -->
+    <div id="mainContent" style="display:none;">
+
+      <!-- ── SCORE HERO ── -->
+      <div class="score-hero">
+
+        <!-- Circular gauge -->
+        <div class="score-circle">
+          <svg width="148" height="148" viewBox="0 0 148 148">
+            <circle class="track" cx="74" cy="74" r="62"/>
+            <circle class="fill" id="scoreFill" cx="74" cy="74" r="62"
+              stroke-dasharray="389.6"
+              stroke-dashoffset="389.6"/>
+          </svg>
+          <div class="score-text">
+            <span class="score-num" id="scoreNum">0</span>
+            <span class="score-max">/100</span>
+            <span class="score-lbl" id="scoreLbl">—</span>
+          </div>
+        </div>
+
+        <!-- User info -->
+        <div class="hero-info">
+          <div class="hero-name" id="heroName">Loading…</div>
+          <div class="hero-email">
+            <i class="bi bi-envelope-at"></i>
+            <span id="heroEmail">—</span>
+          </div>
+          <div class="hero-badges" id="heroBadges"></div>
+          <div class="restricted-warning" id="restrictedWarning">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Your account is restricted due to a low trust score. Some features are limited.
+          </div>
+        </div>
+
+        <!-- Level icon -->
+        <div class="hero-right">
+          <div class="level-icon-wrap" id="levelIconWrap">
+            <i class="bi bi-star-fill" id="levelIcon"></i>
+          </div>
+          <div class="hero-right-label">Trust Level</div>
+        </div>
+      </div>
+
+      <!-- ── METRICS ── -->
+      <div class="metrics-grid" id="metricsGrid"></div>
+
+      <!-- ── PROMOTION CARD ── -->
+      <div class="promo-card" id="promoCard">
+        <div class="promo-header">
+          <div>
+            <div class="promo-title" id="promoTitle">Promotion Progress</div>
+            <div class="promo-subtitle" id="promoSubtitle">Meet all criteria to qualify</div>
+          </div>
+          <div id="promoEligible" style="display:none;">
+            <span class="promo-eligible-badge">
+              <i class="bi bi-check-circle-fill"></i> Eligible for Promotion!
+            </span>
+          </div>
+        </div>
+        <div class="criteria-list" id="criteriaList"></div>
+        <div class="promo-bar-wrap">
+          <div class="promo-bar-label">
+            <span>Overall Progress</span>
+            <span id="promoPercent">0%</span>
+          </div>
+          <div class="promo-bar">
+            <div class="promo-bar-fill" id="promoBarFill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DEMO EVENTS ── -->
+      <div class="demo-panel">
+        <div class="demo-header">
+          <div class="demo-header-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+          <div>
+            <span class="demo-header-title">Simulate Events</span>
+            <span class="demo-header-sub">— Demo: click to trigger score changes</span>
+          </div>
+        </div>
+        <div class="event-btns" id="eventBtns"></div>
+      </div>
+
+      <!-- ── ADMIN CONTROLS ── -->
+      <div class="admin-panel" id="adminPanel" style="display:none;">
+        <div class="admin-panel-header">
+          <div class="admin-panel-icon"><i class="bi bi-shield-fill-check"></i></div>
+          <div class="admin-panel-title">Admin Controls</div>
+        </div>
+        <div class="admin-actions">
+          <input type="text" class="admin-input" id="adminReason" placeholder="Reason for score adjustment…">
+          <button class="abtn abtn-up" onclick="adminAdjust('UP')">
+            <i class="bi bi-arrow-up-circle-fill"></i> +10 Score
+          </button>
+          <button class="abtn abtn-down" onclick="adminAdjust('DOWN')">
+            <i class="bi bi-arrow-down-circle-fill"></i> −10 Score
+          </button>
+        </div>
+      </div>
+
+      <!-- ── HISTORY ── -->
+      <div class="two-col">
+        <div>
+          <div class="section-title">
+            <i class="bi bi-graph-up-arrow"></i> Score History
+          </div>
+          <div class="history-list" id="scoreHistoryList">
+            <div class="empty-history">
+              <i class="bi bi-clock-history"></i> No score changes yet.
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="section-title">
+            <i class="bi bi-arrow-left-right"></i> Role History
+          </div>
+          <div class="history-list" id="roleHistoryList">
+            <div class="empty-history">
+              <i class="bi bi-person-gear"></i> No role changes yet.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /mainContent -->
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <i class="bi bi-check-circle-fill" id="toastIcon"></i>
+    <span id="toastMsg"></span>
+  </div>
+
+
+  <!--  SCRIPTS  -->
+  <script src="../JS/app.js"></script>
+  <script>
+
+    let currentUserId = null;
+    let currentSession = null;
+    let profileData = null;
+
+    window.onload = async () => {
+      const s = getSession();
+      if (!s) return window.location.href = 'login.html';
+      currentSession = s;
+      currentUserId  = s.userId;
+
+      /* Back button by role */
+      const backMap = {
+        ADMIN:    'dashboard.html',
+        STAFF:    'staff-dashboard.html',
+        CUSTOMER: 'customer-home.html',
+      };
+      document.getElementById('backBtn').href = backMap[s.role] || 'home.html';
+
+      /* Show admin panel only for admins */
+      if (s.role === 'ADMIN') {
+        document.getElementById('adminPanel').style.display = 'block';
+      }
+
+      await loadProfile();
+    };
+
+    async function loadProfile() {
+      try {
+        const res = await fetch(`${API_BASE}/trust/profile/${currentUserId}`, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        profileData = await res.json();
+        renderProfile(profileData);
+      } catch(e) {
+        /* Backend not connected — use demo data */
+        profileData = getDemoData();
+        renderProfile(profileData);
+        showToast('Using demo data — backend not connected', 'bi-wifi-off');
+      }
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('mainContent').style.display  = 'block';
+    }
+
+    /* 
+       RENDER PROFILE
+     */
+    function renderProfile(data) {
+      const score = data.trustScore  || 75;
+      const level = data.trustLevel  || 'NORMAL';
+      const role  = data.role        || currentSession.role;
+
+      /* ── Gauge animation ── */
+      const circumference = 389.6;
+      const offset = circumference - (score / 100) * circumference;
+
+      const fillColors = { HIGH:'#10B981', NORMAL:'#3B82F6', WARNING:'#F59E0B', RESTRICTED:'#EF4444' };
+      const fillColor  = fillColors[level] || '#F59E0B';
+
+      const fillEl = document.getElementById('scoreFill');
+      fillEl.style.stroke = fillColor;
+      setTimeout(() => { fillEl.style.strokeDashoffset = offset; }, 120);
+
+      document.getElementById('scoreNum').textContent = score;
+      document.getElementById('scoreNum').style.color = fillColor;
+      document.getElementById('scoreLbl').textContent = level;
+      document.getElementById('scoreLbl').style.color = fillColor;
+
+      /* ── User info ── */
+      document.getElementById('heroName').textContent  = data.name  || currentSession.name;
+      document.getElementById('heroEmail').textContent = data.email || currentSession.email;
+
+      /* ── Level icon (Bootstrap Icons) ── */
+      const levelIcons = { HIGH:'bi-trophy-fill', NORMAL:'bi-star-fill', WARNING:'bi-exclamation-triangle-fill', RESTRICTED:'bi-lock-fill' };
+      const iconEl = document.getElementById('levelIcon');
+      iconEl.className = `bi ${levelIcons[level] || 'bi-star-fill'}`;
+      iconEl.style.color = fillColor;
+
+      /* ── Badges ── */
+      const levelBadgeClass = { HIGH:'hb-high', NORMAL:'hb-normal', WARNING:'hb-warning', RESTRICTED:'hb-restrict' };
+      const levelBadgeIcon  = { HIGH:'bi-trophy-fill', NORMAL:'bi-star-fill', WARNING:'bi-exclamation-triangle-fill', RESTRICTED:'bi-lock-fill' };
+      document.getElementById('heroBadges').innerHTML = `
+        <span class="hbadge hb-role">
+          <i class="bi bi-person-badge-fill"></i> ${role}
+        </span>
+        <span class="hbadge ${levelBadgeClass[level] || 'hb-normal'}">
+          <i class="bi ${levelBadgeIcon[level] || 'bi-star-fill'}"></i>
+          ${level} Trust
+        </span>
+        ${data.isRestricted ? `<span class="hbadge hb-restricted"><i class="bi bi-lock-fill"></i> Restricted</span>` : ''}
+      `;
+
+      /* ── Restricted warning ── */
+      const warnEl = document.getElementById('restrictedWarning');
+      warnEl.style.display = data.isRestricted ? 'flex' : 'none';
+
+      /* ── Sections ── */
+      renderMetrics(data, role);
+      renderPromotion(data, role);
+      renderEventButtons(role);
+      renderScoreHistory(data.scoreHistory || []);
+      renderRoleHistory(data.roleHistory   || []);
+    }
+
+    /* 
+       METRICS
+     */
+    function renderMetrics(data, role) {
+      const isCustomer = role === 'CUSTOMER';
+      const isStaff    = role === 'STAFF';
+
+      const cards = [
+        { icon:'bi-bullseye',                val: data.trustScore || 75,               lbl:'Trust Score'      },
+        ...(isCustomer ? [
+          { icon:'bi-bag-check-fill',        val: data.totalOrders || 0,               lbl:'Total Orders'     },
+          { icon:'bi-cash-coin',             val:`Rs.${(data.totalSpending||0).toLocaleString()}`, lbl:'Total Spending'},
+          { icon:'bi-x-circle-fill',         val: data.cancellations || 0,             lbl:'Cancellations'    },
+        ] : []),
+        ...(isStaff ? [
+          { icon:'bi-check-circle-fill',     val: data.completedTasks || 0,            lbl:'Tasks Done'       },
+          { icon:'bi-star-fill',             val:`${(data.performanceRating||0).toFixed(1)}/5`, lbl:'Rating' },
+          { icon:'bi-exclamation-triangle-fill', val: data.complaintsCount || 0,       lbl:'Complaints'       },
+        ] : []),
+        { icon:'bi-graph-up-arrow',          val:`${data.promotionProgress || 0}%`,    lbl:'Promo Progress'   },
+      ];
+
+      document.getElementById('metricsGrid').innerHTML = cards.map((c, i) => `
+        <div class="metric-card" style="animation-delay:${i * .05}s;">
+          <div class="metric-icon-wrap"><i class="bi ${c.icon}"></i></div>
+          <div class="metric-val">${c.val}</div>
+          <div class="metric-lbl">${c.lbl}</div>
+        </div>`).join('');
+    }
+
+    function renderPromotion(data, role) {
+      const card = document.getElementById('promoCard');
+      const prog = data.promotionProgress || 0;
+
+      document.getElementById('promoPercent').textContent = prog + '%';
+      setTimeout(() => {
+        document.getElementById('promoBarFill').style.width = prog + '%';
+      }, 200);
+
+      if (role === 'CUSTOMER') {
+        document.getElementById('promoTitle').textContent    = 'Customer → Premium Upgrade';
+        document.getElementById('promoSubtitle').textContent = 'Complete all criteria to unlock Premium status';
+        renderCriteria([
+          { icon:'bi-bag-fill',   label:'Total Orders',   current: data.totalOrders||0,                                  target: 20,        met: (data.totalOrders||0) >= 20 },
+          { icon:'bi-cash-coin',  label:'Total Spending',  current:`Rs.${(data.totalSpending||0).toFixed(0)}`,           target:'Rs.15,000', met: (data.totalSpending||0) >= 15000 },
+          { icon:'bi-bullseye',   label:'Trust Score',     current: data.trustScore||0,                                   target: 75,        met: (data.trustScore||0) >= 75 },
+        ]);
+
+      } else if (role === 'STAFF') {
+        document.getElementById('promoTitle').textContent    = 'Staff → Senior Staff Promotion';
+        document.getElementById('promoSubtitle').textContent = 'Exceed all performance criteria to get promoted';
+        renderCriteria([
+          { icon:'bi-check2-all',           label:'Tasks Completed',   current: data.completedTasks||0,                              target: 100,    met: (data.completedTasks||0) >= 100 },
+          { icon:'bi-star-fill',            label:'Performance Rating', current:`${(data.performanceRating||0).toFixed(1)}/5`,        target:'4.5/5', met: (data.performanceRating||0) >= 4.5 },
+          { icon:'bi-bullseye',             label:'Trust Score',        current: data.trustScore||0,                                  target: 80,     met: (data.trustScore||0) >= 80 },
+          { icon:'bi-shield-fill-check',    label:'No Complaints',      current: data.complaintsCount||0,                             target: 0,      met: (data.complaintsCount||0) === 0 },
+        ]);
+
+      } else {
+        /* Admin */
+        document.getElementById('promoTitle').textContent    = 'Admin — Full Access';
+        document.getElementById('promoSubtitle').textContent = 'You have the highest role in the system';
+        document.getElementById('criteriaList').innerHTML    = `
+          <div style="color:rgba(255,255,255,.4);font-size:.88rem;display:flex;align-items:center;gap:.4rem;">
+            <i class="bi bi-shield-fill-check" style="color:var(--gold);"></i>
+            No promotion criteria needed — you are Admin.
+          </div>`;
+        document.getElementById('promoBarFill').style.width  = '100%';
+        document.getElementById('promoPercent').textContent  = '100%';
+      }
+
+      if (data.promotionReady) {
+        card.classList.add('eligible');
+        document.getElementById('promoEligible').style.display = 'block';
+      } else {
+        card.classList.remove('eligible');
+        document.getElementById('promoEligible').style.display = 'none';
+      }
+    }
+
+    function renderCriteria(criteria) {
+      document.getElementById('criteriaList').innerHTML = criteria.map(c => `
+        <div class="criterion">
+          <div class="crit-left">
+            <div class="crit-icon ${c.met ? 'met' : 'miss'}">
+              <i class="bi ${c.met ? 'bi-check-lg' : 'bi-x-lg'}"></i>
+            </div>
+            <span class="crit-label">
+              <i class="bi ${c.icon}" style="margin-right:.3rem;color:rgba(255,255,255,.4);font-size:.82rem;"></i>
+              ${c.label}
+            </span>
+          </div>
+          <span class="crit-value ${c.met ? 'met' : 'miss'}">${c.current} / ${c.target}</span>
+        </div>`).join('');
+    }
+
+    function renderEventButtons(role) {
+      const common = [
+        { label:'Complete Order (+5)',  icon:'bi-bag-check-fill',         event:'ORDER_COMPLETE', val:1500, cls:'ev-green'  },
+        { label:'Cancel Order (−8)',    icon:'bi-x-circle-fill',           event:'CANCELLATION',   val:0,    cls:'ev-red'    },
+        { label:'Complaint Filed (−12)',icon:'bi-exclamation-circle-fill', event:'COMPLAINT',      val:0,    cls:'ev-red'    },
+      ];
+      const staffOnly = [
+        { label:'Task Done (+4)',       icon:'bi-check2-circle',           event:'TASK_DONE',      val:0,    cls:'ev-blue'   },
+        { label:'Good Rating (+6)',     icon:'bi-star-fill',               event:'GOOD_RATING',    val:4.8,  cls:'ev-yellow' },
+      ];
+      const events = role === 'STAFF' ? [...common, ...staffOnly] : common;
+
+      document.getElementById('eventBtns').innerHTML = events.map(e => `
+        <button class="evbtn ${e.cls}" onclick="simulateEvent('${e.event}', ${e.val})">
+          <i class="bi ${e.icon}"></i> ${e.label}
+        </button>`).join('');
+    }
+
+    function renderScoreHistory(history) {
+      if (!history.length) return;
+      document.getElementById('scoreHistoryList').innerHTML = history.slice(0, 8).map(h => {
+        const change = h.changeBy || h.change_by || 0;
+        const isPos  = change >= 0;
+        return `
+          <div class="history-item">
+            <div class="hist-change ${isPos ? 'pos' : 'neg'}">${isPos ? '+' : ''}${change}</div>
+            <div class="hist-info">
+              <div class="hist-reason">${h.reason}</div>
+              <div class="hist-type">${h.actionType || h.action_type || ''}</div>
+            </div>
+            <div class="hist-meta">
+              <div class="hist-score">${h.oldScore || h.old_score} → ${h.newScore || h.new_score}</div>
+              <div class="hist-date">${formatDate(h.createdAt || h.created_at)}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderRoleHistory(history) {
+      if (!history.length) return;
+      document.getElementById('roleHistoryList').innerHTML = history.slice(0, 6).map(h => `
+        <div class="role-hist-item">
+          <i class="bi bi-arrow-left-right rh-icon"></i>
+          <div class="rh-roles">
+            <div class="rh-change">${h.oldRole || h.old_role} → ${h.newRole || h.new_role}</div>
+            <div class="rh-by">
+              <i class="bi bi-person-fill" style="font-size:.7rem;"></i>
+              By: ${h.changedBy || h.changed_by} &nbsp;·&nbsp;
+              <i class="bi bi-bullseye" style="font-size:.7rem;"></i>
+              Score: ${h.trustScoreAt || h.trust_score_at}
+            </div>
+            <div class="rh-reason">${h.reason || ''}</div>
+          </div>
+          <div class="rh-date">${formatDate(h.createdAt || h.created_at)}</div>
+        </div>`).join('');
+    }
+
+    async function simulateEvent(event, value) {
+      try {
+        const res = await fetch(`${API_BASE}/trust/event`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: currentUserId, event, value })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Event recorded: ${event}`);
+          await loadProfile();
+        } else {
+          demoAdjustScore(event, value);
+        }
+      } catch(e) {
+        demoAdjustScore(event, value);
+      }
+    }
+
+    async function adminAdjust(direction) {
+      const reason = document.getElementById('adminReason').value.trim();
+      if (!reason) { showToast('Please enter a reason first', 'bi-exclamation-triangle-fill'); return; }
+      try {
+        const res = await fetch(`${API_BASE}/trust/admin-adjust`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: currentUserId, direction, reason })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Score ${direction === 'UP' ? 'increased' : 'decreased'}`);
+          await loadProfile();
+        } else {
+          showToast(data.message || 'Failed', 'bi-x-circle-fill');
+        }
+      } catch(e) {
+        showToast('Backend not connected — demo mode', 'bi-wifi-off');
+      }
+      document.getElementById('adminReason').value = '';
+    }
+
+    function demoAdjustScore(event, value) {
+      const changes = {
+        ORDER_COMPLETE: +5, CANCELLATION: -8,
+        COMPLAINT: -12, TASK_DONE: +4, GOOD_RATING: +6,
+      };
+      const change = changes[event] || 0;
+      if (!profileData) return;
+
+      profileData.trustScore = Math.min(100, Math.max(0, (profileData.trustScore || 75) + change));
+      profileData.trustLevel = calcTrustLevel(profileData.trustScore);
+
+      if (!profileData.scoreHistory) profileData.scoreHistory = [];
+      profileData.scoreHistory.unshift({
+        changeBy: change,
+        reason: eventLabel(event),
+        actionType: event,
+        oldScore: profileData.trustScore - change,
+        newScore: profileData.trustScore,
+        createdAt: new Date().toISOString(),
+      });
+
+      renderProfile(profileData);
+      showToast(
+        `${eventLabel(event)} → Score: ${profileData.trustScore}`,
+        change >= 0 ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'
+      );
+    }
+
+    function calcTrustLevel(score) {
+      if (score >= 80) return 'HIGH';
+      if (score >= 60) return 'NORMAL';
+      if (score >= 40) return 'WARNING';
+      return 'RESTRICTED';
+    }
+
+    function eventLabel(e) {
+      return {
+        ORDER_COMPLETE: 'Order completed',
+        CANCELLATION:   'Order cancelled',
+        COMPLAINT:      'Complaint filed',
+        TASK_DONE:      'Task completed',
+        GOOD_RATING:    'Good rating received',
+      }[e] || e;
+    }
+
+    function getDemoData() {
+      const s = currentSession;
+      return {
+        name: s?.name  || 'Demo User',
+        email: s?.email || 'demo@urbanplate.com',
+        role: s?.role  || 'CUSTOMER',
+        trustScore: 75, trustLevel: 'NORMAL',
+        isRestricted: false,
+        totalOrders: 12, totalSpending: 8500,
+        completedTasks: 65, performanceRating: 4.2,
+        complaintsCount: 0, cancellations: 2,
+        promotionProgress: 55, promotionReady: false,
+        scoreHistory: [], roleHistory: [],
+      };
+    }
+
+    function showToast(msg, icon = 'bi-check-circle-fill') {
+      document.getElementById('toastIcon').className = `bi ${icon}`;
+      document.getElementById('toastMsg').textContent = msg;
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+  </script>
+</body>
+</html>

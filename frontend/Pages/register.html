@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+    :root {
+      --gold:        #E8A838;
+      --gold-dark:   #C4891A;
+      --gold-light:  #F5C76A;
+      --dark:        #0F0D0A;
+      --dark-mid:    #1C1914;
+      --panel-bg:    #141210;
+      --cream:       #FAF7F2;
+      --cream-dark:  #EDE8DF;
+      --white:       #FFFFFF;
+      --text:        #1C1914;
+      --text-light:  #7A7066;
+      --success:     #2E7D52;
+      --error:       #C0392B;
+    }
+ 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+ 
+    body {
+      font-family: 'Open Sans', sans-serif;
+      display: flex;
+    }
+ 
+    a { text-decoration: none; }
+ 
+    .reg-left {
+      width: 400px;
+      flex-shrink: 0;
+      height: 100vh;           
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3rem 2.6rem;
+      position: relative;
+      overflow: hidden;        /* clips the orbs, never scrolls */
+    }
+ 
+    /* Orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(232,168,56,.20) 0%, transparent 70%);
+      top: -150px; right: -150px;
+    }
+    .orb-2 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(232,168,56,.10) 0%, transparent 70%);
+      bottom: -90px; left: -70px;
+    }
+ 
+    /* Grid lines */
+    .grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.04) 1px, transparent 1px);
+      background-size: 55px 55px;
+      pointer-events: none;
+    }
+ 
+    /* Noise texture */
+    .reg-left::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: .4;
+    }
+ 
+    .left-top, .left-mid, .left-bottom { position: relative; z-index: 1; }
+ 
+    /* Logo */
+    .panel-logo { display: flex; align-items: center; gap: .6rem; }
+    .logo-icon-wrap {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; color: var(--dark);
+      box-shadow: 0 4px 18px rgba(232,168,56,.35); flex-shrink: 0;
+    }
+    .logo-text {
+      font-family: 'Open Sans', serif;
+      font-size: 1.6rem; font-weight: 700; color: var(--white); line-height: 1;
+    }
+    .logo-text span { color: var(--gold); }
+    .logo-sub {
+      font-size: .7rem; color: rgba(255,255,255,.35);
+      letter-spacing: .12em; text-transform: uppercase; margin-top: .15rem;
+    }
+ 
+    .left-mid { padding: .5rem 0; }
+ 
+    .panel-headline {
+      font-family: 'Open Sans', serif;
+      font-size: 2.6rem; font-weight: 600;
+      color: var(--white); line-height: 1.1;
+      margin-bottom: .9rem; letter-spacing: -.01em;
+    }
+    .panel-headline em { font-style: italic; color: var(--gold); display: block; }
+ 
+    .panel-desc {
+      color: rgba(255,255,255,.42); font-size: .88rem;
+      line-height: 1.75; font-weight: 300; margin-bottom: 1.8rem;
+    }
+ 
+    /* Feature pills */
+    .feature-pills { display: flex; flex-direction: column; gap: .55rem; }
+    .feature-pill {
+      display: flex; align-items: center; gap: .65rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; padding: .62rem .9rem;
+      color: rgba(255,255,255,.65); font-size: .83rem;
+      transition: background .2s, border-color .2s;
+    }
+    .feature-pill:hover { background: rgba(232,168,56,.1); border-color: rgba(232,168,56,.22); }
+    .feature-pill .pill-icon {
+      width: 30px; height: 30px;
+      background: rgba(232,168,56,.15); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: .95rem; flex-shrink: 0;
+    }
+ 
+    /* Role pills — preserved as commented */
+    .role-pills { display: flex; flex-direction: column; gap: .55rem; }
+    .role-pill {
+      display: flex; align-items: center; gap: .7rem;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; padding: .6rem .9rem;
+      color: rgba(255,255,255,.65); font-size: .82rem;
+      transition: background .2s, border-color .2s;
+    }
+    .role-pill:hover { background: rgba(232,168,56,.1); border-color: rgba(232,168,56,.22); }
+    .role-pill .pill-icon {
+      width: 28px; height: 28px; background: rgba(232,168,56,.15);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: .9rem; flex-shrink: 0;
+    }
+    .role-pill strong { color: rgba(255,255,255,.88); font-weight: 600; }
+ 
+    /* Stat bar */
+    .stat-bar {
+      display: flex; gap: 2.5rem;
+      padding-top: 1.8rem;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .stat-num {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.75rem; font-weight: 700; color: var(--gold); line-height: 1;
+    }
+    .stat-lbl {
+      font-size: .7rem; color: rgba(255,255,255,.32);
+      text-transform: uppercase; letter-spacing: .1em; margin-top: .2rem;
+    }
+ 
+    .reg-right {
+      flex: 1;
+      height: 100vh;           
+      overflow-y: auto;        
+      background: var(--white);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; 
+      padding: 4rem 5rem;
+      position: relative;
+    }
+ 
+    /* Thin custom scrollbar on right panel */
+    .reg-right::-webkit-scrollbar { width: 5px; }
+    .reg-right::-webkit-scrollbar-track { background: transparent; }
+    .reg-right::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: 99px; }
+    .reg-right::-webkit-scrollbar-thumb:hover { background: #d0c9be; }
+ 
+    /* Corner orb decorations */
+    .reg-right::before {
+      content: ''; position: absolute;
+      top: -80px; right: -80px;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .reg-right::after {
+      content: ''; position: absolute;
+      bottom: -60px; left: -60px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+ 
+    /* Inner form wrapper */
+    .form-box {
+      width: 100%;
+      max-width: 560px;
+      position: relative; z-index: 1;
+      padding-bottom: 3rem;  
+      animation: slideUp .55s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+ 
+    /* Header */
+    .reg-header { margin-bottom: 2rem; }
+    .welcome-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: linear-gradient(90deg, rgba(232,168,56,.12), rgba(232,168,56,.06));
+      border: 1px solid rgba(232,168,56,.2); border-radius: 999px;
+      padding: .22rem .7rem; font-size: .73rem; font-weight: 600;
+      color: var(--gold-dark); letter-spacing: .05em;
+      text-transform: uppercase; margin-bottom: .9rem;
+    }
+    .reg-right h2 {
+      font-family: 'Open Sans', serif;
+      font-size: 2.4rem; font-weight: 700;
+      color: var(--dark); line-height: 1.1; margin-bottom: .35rem;
+    }
+    .reg-right h2 span { color: var(--gold-dark); }
+    .reg-right .subtitle { color: var(--text-light); font-size: .88rem; font-weight: 300; }
+ 
+    /* Alert */
+    #alert-box {
+      display: none; padding: .72rem 1rem; border-radius: 10px;
+      font-size: .84rem; font-weight: 500; margin-bottom: 1.1rem;
+      border-left: 4px solid transparent; animation: alertIn .3s ease;
+    }
+    @keyframes alertIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    #alert-box.success { background:rgba(46,125,82,.08); border-color:var(--success); color:var(--success); }
+    #alert-box.error   { background:rgba(192,57,43,.08);  border-color:var(--error);   color:var(--error); }
+ 
+    /* Form grid */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+ 
+    /* Form group */
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block; font-size: .78rem; font-weight: 600;
+      color: var(--text); letter-spacing: .04em;
+      text-transform: uppercase; margin-bottom: .42rem;
+    }
+    .form-group label i { margin-right: .25rem; color: var(--gold-dark); }
+ 
+    /* Input wrap */
+    .input-wrap { position: relative; display: flex; align-items: center; }
+    .input-icon {
+      position: absolute; left: 13px; color: var(--text-light);
+      font-size: .95rem; pointer-events: none; z-index: 2; transition: color .2s;
+    }
+    .input-wrap:focus-within .input-icon { color: var(--gold-dark); }
+ 
+    .form-control {
+      width: 100%; height: 48px; padding: 0 42px 0 40px;
+      border: 1.5px solid var(--cream-dark); border-radius: 11px;
+      font-family: 'Open Sans', sans-serif; font-size: .9rem;
+      color: var(--text); background: var(--cream); outline: none;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+      -webkit-appearance: none;
+    }
+    .form-control::placeholder { color: #B8B0A6; }
+    .form-control:focus {
+      border-color: var(--gold); background: var(--white);
+      box-shadow: 0 0 0 4px rgba(232,168,56,.10);
+    }
+ 
+    /* Select */
+    select.form-control {
+      padding-left: 40px; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237A7066' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 13px center;
+      padding-right: 34px; background-color: var(--cream);
+    }
+ 
+    /* Toggle password */
+    .toggle-pw {
+      position: absolute; right: 13px; color: var(--text-light);
+      cursor: pointer; font-size: .95rem; z-index: 2;
+      display: flex; align-items: center; transition: color .2s;
+    }
+    .toggle-pw:hover { color: var(--gold-dark); }
+ 
+    /* Password strength */
+    .pw-strength {
+      height: 4px; border-radius: 99px;
+      background: var(--cream-dark); margin-top: .45rem; overflow: hidden;
+    }
+    .pw-strength-bar {
+      height: 100%; border-radius: 99px;
+      transition: width .35s ease, background .35s ease; width: 0%;
+    }
+    .pw-hint {
+      font-size: .74rem; color: var(--text-light);
+      margin-top: .25rem; font-weight: 500; transition: color .3s;
+    }
+ 
+    /* Submit button */
+    .btn-register {
+      display: flex; align-items: center; justify-content: center; gap: .55rem;
+      width: 100%; height: 52px; margin-top: .5rem;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--dark); font-family: 'Open Sans', sans-serif;
+      font-size: .95rem; font-weight: 700; border: none;
+      border-radius: 13px; cursor: pointer; letter-spacing: .03em;
+      box-shadow: 0 6px 24px rgba(232,168,56,.32);
+      transition: transform .18s, box-shadow .18s, opacity .18s;
+      position: relative; overflow: hidden;
+    }
+    .btn-register::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .btn-register:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(232,168,56,.42);
+    }
+    .btn-register:active:not(:disabled) { transform: translateY(0); }
+    .btn-register:disabled { opacity: .7; cursor: not-allowed; }
+    .btn-register .spinner {
+      display: none; width: 18px; height: 18px;
+      border: 2px solid rgba(15,13,10,.3);
+      border-top-color: var(--dark); border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .btn-register.loading .spinner { display: block; }
+    .btn-register.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+ 
+    /* Login prompt */
+    .login-prompt {
+      text-align: center; margin-top: 1.4rem;
+      font-size: .86rem; color: var(--text-light);
+    }
+    .login-prompt a { color: var(--gold-dark); font-weight: 700; }
+    .login-prompt a:hover { text-decoration: underline; }
+ 
+    /* Section divider */
+    .section-divider {
+      display: flex; align-items: center; gap: .6rem; margin: .4rem 0 1rem;
+    }
+    .section-divider-line { flex: 1; height: 1px; background: var(--cream-dark); }
+    .section-divider-label {
+      font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--text-light); white-space: nowrap;
+    }
+ 
+    /* ─── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      html, body { overflow: auto; height: auto; }
+      .reg-left { display: none; }
+      .reg-right {
+        height: auto; min-height: 100vh;
+        overflow-y: visible;
+        padding: 2.5rem 1.5rem;
+      }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 500px) {
+      .reg-right { padding: 2rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!--  LEFT PANEL  -->
+  <div class="reg-left">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-lines"></div>
+
+    <!-- Logo -->
+    <div class="left-top">
+      <div class="panel-logo">
+        <div class="logo-icon-wrap"><i class="bi bi-fork-knife"></i></div>
+        <div>
+          <div class="logo-text">Urban <span>Plate</span></div>
+          <div class="logo-sub">Restaurant </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="left-mid">
+      <!-- <span class="dish-icon">🍳</span> -->
+      <h2 class="panel-headline">
+        Join Our<br>
+        <em>Platform Today</em>
+      </h2>
+      <p class="panel-desc">Create your account and unlock the full power of smart restaurant management.</p>
+
+      <div class="feature-pills">
+        <div class="feature-pill">
+          <div class="pill-icon"><i class="bi bi-person-check-fill"></i></div>
+          <div>Free to register &amp; get started</div>
+        </div>
+        <!-- <div class="feature-pill">
+          <div class="pill-icon"><i class="bi bi-shield-lock-fill"></i></div>
+          <div>Secure role-based access</div>
+        </div> -->
+        <div class="feature-pill">
+          <div class="pill-icon"><i class="bi bi-clock-history"></i></div>
+          <div>24/7 system availability</div>
+        </div>
+      </div>
+
+      <!-- Role pills — commented out originally, preserved -->
+      <!-- <div class="role-pills">
+        <div class="role-pill">
+          <div class="pill-icon"><i class="bi bi-shield-lock-fill"></i></div>
+          <div><strong>Admin</strong> — Full system control</div>
+        </div>
+        <div class="role-pill">
+          <div class="pill-icon"><i class="bi bi-person-badge-fill"></i></div>
+          <div><strong>Staff</strong> — Manage orders &amp; food</div>
+        </div>
+        <div class="role-pill">
+          <div class="pill-icon"><i class="bi bi-bag-heart-fill"></i></div>
+          <div><strong>Customer</strong> — Browse &amp; place orders</div>
+        </div>
+      </div> -->
+    </div>
+
+    <!-- Stats -->
+    <!-- <div class="left-bottom">
+      <div class="stat-bar">
+        <div>
+          <div class="stat-num">Free</div>
+          <div class="stat-lbl">To Register</div>
+        </div>
+        <div>
+          <div class="stat-num">60s</div>
+          <div class="stat-lbl">Setup Time</div>
+        </div>
+        <div>
+          <div class="stat-num">24/7</div>
+          <div class="stat-lbl">Access</div>
+        </div>
+      </div>
+    </div> -->
+  </div>
+
+
+  <!--  RIGHT PANEL  -->
+  <div class="reg-right">
+    <div class="form-box">
+
+      <!-- Header -->
+      <div class="reg-header">
+        <div class="welcome-badge"><i class="bi bi-person-plus-fill"></i> New Account</div>
+        <h2>Create Your<br><span>Account</span></h2>
+        <p class="subtitle">Fill in your details below to get started</p>
+      </div>
+
+      <!-- Alert -->
+      <div id="alert-box" style="display:none;"></div>
+
+      <form id="registerForm" novalidate>
+
+        <!-- Personal Info -->
+        <div class="section-divider">
+          <div class="section-divider-line"></div>
+          <span class="section-divider-label"><i class="bi bi-person" style="margin-right:.3rem;"></i>Personal Info</span>
+          <div class="section-divider-line"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="bi bi-person-circle"></i>First Name <span style="color:var(--gold-dark)">*</span></label>
+            <div class="input-wrap">
+              <i class="bi bi-person-circle input-icon"></i>
+              <input type="text" id="firstName" class="form-control" placeholder="John" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="bi bi-person-circle"></i>Last Name <span style="color:var(--gold-dark)">*</span></label>
+            <div class="input-wrap">
+              <i class="bi bi-person-circle input-icon"></i>
+              <input type="text" id="lastName" class="form-control" placeholder="Doe" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="bi bi-envelope-at"></i>Email Address <span style="color:var(--gold-dark)">*</span></label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope-at input-icon"></i>
+            <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+          </div>
+        </div>
+
+        <!-- Account Setup -->
+        <div class="section-divider" style="margin-top:1.3rem;">
+          <div class="section-divider-line"></div>
+          <span class="section-divider-label"><i class="bi bi-gear" style="margin-right:.3rem;"></i>Account Setup</span>
+          <div class="section-divider-line"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="bi bi-person-badge"></i>Role <span style="color:var(--gold-dark)">*</span></label>
+            <div class="input-wrap">
+              <i class="bi bi-person-badge input-icon"></i>
+              <select id="role" class="form-control" style="padding-left:40px;">
+                <option value="CUSTOMER">Customer</option>
+                <!-- <option value="STAFF">Staff</option> -->
+                <!-- <option value="ADMIN">Admin</option> -->
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><i class="bi bi-telephone"></i>Telephone</label>
+            <div class="input-wrap">
+              <i class="bi bi-telephone input-icon"></i>
+              <input type="tel" id="telephone" class="form-control" placeholder="077 123 4567">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><i class="bi bi-geo-alt"></i>Address</label>
+          <div class="input-wrap">
+            <i class="bi bi-geo-alt input-icon"></i>
+            <input type="text" id="address" class="form-control" placeholder="123 Main St, Colombo">
+          </div>
+        </div>
+
+        <!-- Security -->
+        <div class="section-divider" style="margin-top:1.3rem;">
+          <div class="section-divider-line"></div>
+          <span class="section-divider-label"><i class="bi bi-shield-lock" style="margin-right:.3rem;"></i>Security</span>
+          <div class="section-divider-line"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="bi bi-lock"></i>Password <span style="color:var(--gold-dark)">*</span></label>
+            <div class="input-wrap">
+              <i class="bi bi-lock input-icon"></i>
+              <input type="password" id="password" class="form-control" placeholder="Min. 6 characters" required
+                     oninput="checkStrength(this.value)">
+              <span class="toggle-pw" onclick="togglePassword('password', this)"><i class="bi bi-eye-fill"></i></span>
+            </div>
+            <div class="pw-strength"><div class="pw-strength-bar" id="strengthBar"></div></div>
+            <div class="pw-hint" id="strengthHint">Enter a password</div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="bi bi-lock-fill"></i>Confirm Password <span style="color:var(--gold-dark)">*</span></label>
+            <div class="input-wrap">
+              <i class="bi bi-lock-fill input-icon"></i>
+              <input type="password" id="confirmPassword" class="form-control" placeholder="Re-enter password" required>
+              <span class="toggle-pw" onclick="togglePassword('confirmPassword', this)"><i class="bi bi-eye-fill"></i></span>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="registerBtn" class="btn-register">
+          <div class="spinner"></div>
+          <span class="btn-text"><i class="bi bi-person-check-fill"></i>&nbsp; Create Account</span>
+        </button>
+
+      </form>
+
+      <div class="login-prompt">
+        Already have an account? <a href="login.html"><i class="bi bi-box-arrow-in-right" style="font-size:.8rem;"></i> Sign in</a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!--  SCRIPTS  -->
+  <script src="../JS/app.js"></script>
+  <script>
+    /* ── Password strength ── */
+    function checkStrength(pw) {
+      const bar  = document.getElementById('strengthBar');
+      const hint = document.getElementById('strengthHint');
+      let score = 0;
+      if (pw.length >= 6)           score++;
+      if (pw.length >= 10)          score++;
+      if (/[A-Z]/.test(pw))         score++;
+      if (/[0-9]/.test(pw))         score++;
+      if (/[^A-Za-z0-9]/.test(pw))  score++;
+
+      const configs = [
+        { w: '0%',   bg: '#e5e7eb', text: 'Enter a password' },
+        { w: '25%',  bg: '#ef4444', text: 'Too weak' },
+        { w: '50%',  bg: '#f97316', text: 'Fair' },
+        { w: '75%',  bg: '#eab308', text: 'Good' },
+        { w: '90%',  bg: '#22c55e', text: 'Strong' },
+        { w: '100%', bg: '#16a34a', text: 'Very strong!' },
+      ];
+      const c = configs[score] || configs[0];
+      bar.style.width      = c.w;
+      bar.style.background = c.bg;
+      hint.textContent     = c.text;
+      hint.style.color     = c.bg;
+    }
+
+    /* ── Toggle password visibility ── */
+    function togglePassword(fieldId, iconEl) {
+      const input  = document.getElementById(fieldId);
+      const isText = input.type === 'text';
+      input.type   = isText ? 'password' : 'text';
+      const icon   = iconEl.querySelector('i');
+      icon.classList.toggle('bi-eye-fill',       isText);
+      icon.classList.toggle('bi-eye-slash-fill', !isText);
+    }
+
+    /* ── Alert helpers ── */
+    function showAlert(box, msg, type) {
+      box.textContent   = msg;
+      box.className     = `alert ${type}`;
+      box.style.display = 'block';
+    }
+    function hideAlert(box) { box.style.display = 'none'; }
+
+    /* ── Loading state helper ── */
+    function setLoading(btn, state, label) {
+      btn.disabled = state;
+      btn.classList.toggle('loading', state);
+      if (!state && label) {
+        btn.querySelector('.btn-text').innerHTML =
+          `<i class="bi bi-person-check-fill"></i>&nbsp; ${label}`;
+      }
+    }
+
+    /* ── Form submit ── */
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alertBox        = document.getElementById('alert-box');
+      const btn             = document.getElementById('registerBtn');
+      const firstName       = document.getElementById('firstName').value.trim();
+      const lastName        = document.getElementById('lastName').value.trim();
+      const email           = document.getElementById('email').value.trim();
+      const role            = document.getElementById('role').value;
+      const telephone       = document.getElementById('telephone').value.trim();
+      const address         = document.getElementById('address').value.trim();
+      const password        = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!firstName || !lastName || !email || !password) {
+        return showAlert(alertBox, 'Please fill in all required fields.', 'error');
+      }
+      if (password !== confirmPassword) {
+        return showAlert(alertBox, 'Passwords do not match!', 'error');
+      }
+      if (password.length < 6) {
+        return showAlert(alertBox, 'Password must be at least 6 characters.', 'error');
+      }
+
+      setLoading(btn, true);
+      hideAlert(alertBox);
+
+      try {
+        const res = await API.register({ firstName, lastName, email, role, telephone, address, password, confirmPassword });
+
+        if (res.success) {
+          showAlert(alertBox, res.message, 'success');
+          setTimeout(() => window.location.href = 'login.html', 1800);
+        } else {
+          showAlert(alertBox, res.message || 'Registration failed.', 'error');
+          setLoading(btn, false, 'Create Account');
+        }
+      } catch (err) {
+        showAlert(alertBox, 'Connection error. Is the server running?', 'error');
+        setLoading(btn, false, 'Create Account');
+      }
+    });
+  </script>
+
+</body>
+</html>
