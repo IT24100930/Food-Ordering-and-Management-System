@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold:          #E8A838;
+      --gold-dark:     #C4891A;
+      --gold-light:    #F5C76A;
+      --dark:          #0F0D0A;
+      --dark-mid:      #1C1914;
+      --panel-bg:      #141210;
+      --sidebar-w:     260px;
+      --cream:         #FAF7F2;
+      --cream-dark:    #EDE8DF;
+      --white:         #FFFFFF;
+      --text:          #1C1914;
+      --text-light:    #7A7066;
+      --success:       #2E7D52;
+      --danger:        #C0392B;
+      --blue:          #1E40AF;
+      --shadow:        0 2px 12px rgba(15,13,10,.08);
+      --shadow-lg:     0 20px 60px rgba(15,13,10,.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--panel-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    /* Sidebar decorative orb */
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.14) 0%, transparent 70%);
+      top: -80px; right: -100px;
+      pointer-events: none;
+      filter: blur(30px);
+    }
+    /* Grid texture */
+    .sidebar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sidebar > * { position: relative; z-index: 1; }
+
+    /* Logo area */
+    .sidebar-logo {
+      padding: 1.6rem 1.4rem 1.3rem;
+      border-bottom: 1px solid rgba(232,168,56,.12);
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: .65rem;
+    }
+    .brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--dark);
+      box-shadow: 0 3px 14px rgba(232,168,56,.35);
+      flex-shrink: 0;
+    }
+    .brand-text {
+      font-family: 'Open Sans', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+    }
+    .brand-text span { color: var(--gold); }
+    .brand-sub {
+      font-size: .65rem;
+      color: rgba(255,255,255,.3);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      background: rgba(232,168,56,.15);
+      color: var(--gold-light);
+      border: 1px solid rgba(232,168,56,.22);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .28rem .75rem;
+      border-radius: 999px;
+    }
+
+    /* Nav */
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+      overflow-y: auto;
+    }
+    .sidebar-nav::-webkit-scrollbar { width: 3px; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(232,168,56,.2); border-radius: 99px; }
+
+    .nav-section {
+      padding: .5rem 1.4rem .2rem;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.22);
+      margin-top: .4rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .78rem 1.4rem;
+      color: rgba(255,255,255,.52);
+      font-size: .875rem;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .nav-item:hover, .nav-item.active {
+      color: var(--gold-light);
+      background: rgba(232,168,56,.08);
+      border-left-color: var(--gold);
+    }
+    .nav-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .nav-item .nav-label { flex: 1; }
+
+    /* Sidebar footer */
+    .sidebar-footer {
+      padding: 1.1rem 1.4rem;
+      border-top: 1px solid rgba(232,168,56,.1);
+    }
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: .8rem;
+    }
+    .sidebar-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .75rem;
+      color: var(--dark);
+      flex-shrink: 0;
+    }
+    .sidebar-user-info { overflow: hidden; }
+    .sidebar-user-name {
+      font-size: .8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.75);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-user-role {
+      font-size: .68rem;
+      color: rgba(255,255,255,.3);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      color: rgba(255,255,255,.4);
+      font-size: .83rem;
+      font-family: 'Open Sans', sans-serif;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: .4rem .5rem;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+      width: 100%;
+    }
+    .btn-logout:hover { color: #FC8181; background: rgba(252,129,129,.08); }
+
+    /* 
+       MAIN CONTENT
+     */
+    .main-content {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 64px;
+      background: var(--white);
+      border-bottom: 1px solid var(--cream-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 12px rgba(15,13,10,.06);
+    }
+    .topbar-left { display: flex; align-items: center; gap: .75rem; }
+    .topbar-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--dark);
+      font-family: 'Open Sans', serif;
+      letter-spacing: .01em;
+    }
+    .topbar-divider {
+      width: 1px;
+      height: 22px;
+      background: var(--cream-dark);
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .78rem;
+      color: var(--text-light);
+    }
+    .breadcrumb i { font-size: .7rem; }
+    .topbar-right { display: flex; align-items: center; gap: .75rem; }
+
+    /* Add User button in topbar */
+    .btn-topbar {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .45rem 1rem;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--dark);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .83rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(232,168,56,.28);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-topbar:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(232,168,56,.38); }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      background: var(--cream);
+      border: 1px solid var(--cream-dark);
+      padding: .35rem .9rem .35rem .35rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .user-chip:hover { border-color: var(--gold); }
+    .user-chip .avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .75rem;
+      color: var(--dark);
+    }
+    .user-chip .uname { font-size: .83rem; font-weight: 600; color: var(--text); }
+
+    /* Page body */
+    .page-body { padding: 2rem; }
+
+    /* ─── WELCOME BANNER ──── */
+    .welcome-banner {
+      background: var(--panel-bg);
+      border-radius: 22px;
+      padding: 2.2rem 2.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      animation: fadeSlide .5s ease both;
+    }
+    @keyframes fadeSlide { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,168,56,.16) 0%, transparent 70%);
+      top: -120px; right: -80px;
+      pointer-events: none;
+      filter: blur(40px);
+    }
+    .welcome-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,168,56,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,168,56,.04) 1px, transparent 1px);
+      background-size: 52px 52px;
+      pointer-events: none;
+    }
+
+    .welcome-content { position: relative; z-index: 1; }
+    .welcome-banner h2 {
+      font-family: 'Open Sans', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: .35rem;
+    }
+    .welcome-banner h2 span { color: var(--gold); }
+    .welcome-banner p { color: rgba(255,255,255,.48); font-size: .88rem; font-weight: 300; }
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: rgba(232,168,56,.18);
+      color: var(--gold-light);
+      border: 1px solid rgba(232,168,56,.3);
+      padding: .32rem .85rem;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+      margin-top: .75rem;
+      letter-spacing: .04em;
+    }
+    .welcome-right {
+      position: relative;
+      z-index: 1;
+      font-size: 5.5rem;
+      line-height: 1;
+      opacity: .18;
+      animation: floatIcon 4s ease-in-out infinite;
+      filter: drop-shadow(0 8px 24px rgba(232,168,56,.3));
+    }
+    @keyframes floatIcon {
+      0%,100% { transform: translateY(0) rotate(-4deg); }
+      50%      { transform: translateY(-12px) rotate(4deg); }
+    }
+
+    /* ─── STATS GRID ──── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 1.4rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      box-shadow: var(--shadow);
+      border: 1px solid transparent;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+      animation: fadeSlide .5s ease both;
+    }
+    .stat-card:nth-child(1) { animation-delay: .05s; }
+    .stat-card:nth-child(2) { animation-delay: .10s; }
+    .stat-card:nth-child(3) { animation-delay: .15s; }
+    .stat-card:nth-child(4) { animation-delay: .20s; }
+    .stat-card:hover { transform: translateY(-3px); border-color: var(--cream-dark); box-shadow: 0 8px 28px rgba(15,13,10,.10); }
+
+    .stat-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+    .stat-icon.gold   { background: #FEF3C7; color: #92400E; }
+    .stat-icon.blue   { background: #DBEAFE; color: #1E40AF; }
+    .stat-icon.green  { background: #D1FAE5; color: #065F46; }
+    .stat-icon.purple { background: #EDE9FE; color: #5B21B6; }
+
+    .stat-info {}
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--dark);
+      line-height: 1;
+      font-family: 'Open Sans', serif;
+    }
+    .stat-label {
+      font-size: .78rem;
+      color: var(--text-light);
+      font-weight: 500;
+      margin-top: .18rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    /* ─── SECTION HEADER ──── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+    .section-header h2 {
+      font-family: 'Open Sans', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    /* ─── QUICK ACCESS ──── */
+    .quick-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .quick-card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 1.5rem 1.3rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all .22s;
+      border: 2px solid transparent;
+      display: block;
+    }
+    .quick-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(232,168,56,.14);
+    }
+    .qicon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(232,168,56,.12), rgba(232,168,56,.06));
+      border: 1px solid rgba(232,168,56,.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      color: var(--gold-dark);
+      margin-bottom: .75rem;
+      transition: background .2s;
+    }
+    .quick-card:hover .qicon {
+      background: linear-gradient(135deg, rgba(232,168,56,.22), rgba(232,168,56,.12));
+    }
+    .qtitle { font-weight: 700; font-size: .9rem; color: var(--dark); }
+    .qdesc  { font-size: .76rem; color: var(--text-light); margin-top: .22rem; }
+
+    /* ─── TABLE CARD ──── */
+    .table-card {
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--cream-dark);
+    }
+    .table-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.3rem 1.6rem;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+    .table-card-head-title {
+      font-family: 'Open Sans', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .table-card-head-count {
+      color: var(--text-light);
+      font-size: .82rem;
+      background: var(--cream);
+      padding: .22rem .7rem;
+      border-radius: 999px;
+      border: 1px solid var(--cream-dark);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      gap: .75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 1rem 1.6rem;
+      border-bottom: 1px solid var(--cream-dark);
+      background: var(--cream);
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+    .search-wrap .si {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: .95rem;
+      pointer-events: none;
+    }
+    .search-wrap input {
+      padding-left: 38px;
+      padding-right: 14px;
+    }
+    .form-control {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px 0 40px;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 10px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: .875rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-control::placeholder { color: #B8B0A6; }
+    .form-control:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(232,168,56,.10);
+    }
+    /* no-icon variant */
+    .form-control.no-icon { padding-left: 14px; }
+
+    .filter-sel {
+      height: 42px;
+      padding: 0 2.2rem 0 .9rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--cream-dark);
+      background: var(--white);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .875rem;
+      color: var(--text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%237A6340' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .75rem center;
+      cursor: pointer;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .filter-sel:focus { border-color: var(--gold); }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--cream); }
+    thead th {
+      padding: .9rem 1rem .9rem 1.2rem;
+      text-align: left;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      border-bottom: 1px solid var(--cream-dark);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--cream-dark);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(232,168,56,.03); }
+    tbody td {
+      padding: .9rem 1rem .9rem 1.2rem;
+      vertical-align: middle;
+      font-size: .88rem;
+    }
+
+    /* User cell */
+    .user-avatar-sm {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .78rem;
+      flex-shrink: 0;
+    }
+    .av-admin    { background: #FEF3C7; color: #92400E; }
+    .av-staff    { background: #DBEAFE; color: #1E40AF; }
+    .av-customer { background: #D1FAE5; color: #065F46; }
+
+    .user-cell { display: flex; align-items: center; gap: .7rem; }
+    .uinfo .uname  { font-weight: 600; font-size: .9rem; color: var(--dark); }
+    .uinfo .uemail { font-size: .76rem; color: var(--text-light); }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      padding: .22rem .65rem;
+      border-radius: 999px;
+      font-size: .73rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .badge-admin    { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+    .badge-staff    { background: #DBEAFE; color: #1E40AF; border: 1px solid #BFDBFE; }
+    .badge-customer { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+    .badge-active   { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+    .badge-inactive { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+
+    /* Action buttons */
+    .action-btns { display: flex; gap: .4rem; }
+    .btn-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      border: 1.5px solid var(--cream-dark);
+      background: var(--white);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .95rem;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: all .18s;
+    }
+    .btn-icon:hover { border-color: var(--gold); color: var(--gold-dark); background: rgba(232,168,56,.06); }
+    .btn-icon.danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(192,57,43,.06); }
+
+    /* Empty / loading */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-light);
+      font-size: .9rem;
+    }
+    .empty-state i { font-size: 2.5rem; display: block; margin-bottom: .75rem; opacity: .35; }
+
+    /* 
+       MODALS
+     */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,13,10,.55);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      padding: 1rem;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 2rem 2.2rem;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow-lg);
+      animation: modalUp .3s cubic-bezier(.22,.68,0,1.2) both;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal::-webkit-scrollbar { width: 4px; }
+    .modal::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: 99px; }
+
+    @keyframes modalUp {
+      from { opacity: 0; transform: translateY(20px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.6rem;
+    }
+    .modal-title-wrap { display: flex; align-items: center; gap: .65rem; }
+    .modal-title-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(232,168,56,.15), rgba(232,168,56,.06));
+      border: 1px solid rgba(232,168,56,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      color: var(--gold-dark);
+    }
+    .modal-title {
+      font-family: 'Open Sans', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      background: var(--cream);
+      border: 1px solid var(--cream-dark);
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+    }
+    .modal-close:hover { background: #FEE2E2; border-color: #FECACA; color: var(--danger); }
+
+    /* Alert in modals */
+    .modal-alert {
+      display: none;
+      padding: .65rem 1rem;
+      border-radius: 10px;
+      font-size: .84rem;
+      font-weight: 500;
+      margin-bottom: 1.1rem;
+      border-left: 4px solid transparent;
+    }
+    .modal-alert.success { background: rgba(46,125,82,.08); border-color: var(--success); color: var(--success); }
+    .modal-alert.error   { background: rgba(192,57,43,.08);  border-color: var(--danger);   color: var(--danger); }
+
+    /* Main alert */
+    #alert-box {
+      display: none;
+      padding: .72rem 1rem;
+      border-radius: 10px;
+      font-size: .84rem;
+      font-weight: 500;
+      margin-bottom: 1.2rem;
+      border-left: 4px solid transparent;
+    }
+    #alert-box.success { background: rgba(46,125,82,.08); border-color: var(--success); color: var(--success); }
+    #alert-box.error   { background: rgba(192,57,43,.08);  border-color: var(--danger);   color: var(--danger); }
+
+    /* Modal form layout */
+    .form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block;
+      font-size: .77rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+    }
+    .form-group label i { margin-right: .25rem; color: var(--gold-dark); }
+    .form-group label .req { color: var(--gold-dark); }
+
+    /* Input wrap for modals */
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      color: var(--text-light);
+      font-size: .9rem;
+      pointer-events: none;
+      z-index: 2;
+      transition: color .2s;
+    }
+    .input-wrap:focus-within .input-icon { color: var(--gold-dark); }
+    .input-wrap .form-control { padding-left: 38px; }
+
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: .9rem;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      transition: color .2s;
+    }
+    .toggle-pw:hover { color: var(--gold-dark); }
+
+    /* Modal submit button */
+    .btn-modal-submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+      height: 48px;
+      margin-top: .5rem;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--dark);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .92rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 5px 18px rgba(232,168,56,.30);
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-modal-submit::before {
+      content:'';
+      position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,.16) 0%,transparent 60%);
+      pointer-events:none;
+    }
+    .btn-modal-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,168,56,.40); }
+    .btn-modal-submit:disabled { opacity: .7; cursor: not-allowed; }
+    .btn-modal-submit .spinner {
+      display: none;
+      width: 17px; height: 17px;
+      border: 2px solid rgba(15,13,10,.25);
+      border-top-color: var(--dark);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .btn-modal-submit.loading .spinner { display: block; }
+    .btn-modal-submit.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Danger confirm modal */
+    .danger-modal { max-width: 400px; text-align: center; }
+    .danger-icon-wrap {
+      width: 68px; height: 68px;
+      background: rgba(192,57,43,.08);
+      border: 2px solid rgba(192,57,43,.18);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--danger);
+      margin-bottom: 1.1rem;
+    }
+    .danger-title {
+      font-family: 'Open Sans', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: .5rem;
+    }
+    .danger-body {
+      color: var(--text-light);
+      font-size: .88rem;
+      margin-bottom: 1.6rem;
+      line-height: 1.65;
+    }
+    .danger-actions { display: flex; gap: .75rem; justify-content: center; }
+    .btn-cancel {
+      padding: .6rem 1.4rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--cream-dark);
+      background: var(--white);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .btn-cancel:hover { border-color: var(--text-light); background: var(--cream); }
+    .btn-deactivate {
+      padding: .6rem 1.4rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #E53E3E, #C0392B);
+      font-family: 'Open Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(192,57,43,.28);
+      transition: transform .15s, opacity .15s;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .btn-deactivate:hover { transform: translateY(-1px); }
+    .btn-deactivate .spinner {
+      display: none;
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .btn-deactivate.loading .spinner { display: block; }
+    .btn-deactivate.loading .btn-text { display: none; }
+
+    /* select inside modal */
+    .form-group select.form-control {
+      padding-left: 38px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%237A6340' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .75rem center;
+      padding-right: 2.2rem;
+      cursor: pointer;
+      appearance: none;
+    }
+    .form-group select.form-control.no-icon { padding-left: 14px; }
+  </style>
+</head>
+<body>
+
+<!--  SIDEBAR  -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand-logo">
+      <div class="brand-icon"><i class="bi bi-fork-knife"></i></div>
+      <div>
+        <div class="brand-text">Urban <span>Plate</span></div>
+        <div class="brand-sub">Restaurant </div>
+      </div>
+    </div>
+    <div class="sidebar-role-badge"><i class="bi bi-shield-fill-check"></i> Admin Panel</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item active" href="dashboard.html">
+      <i class="bi bi-speedometer2"></i>
+      <span class="nav-label">Dashboard</span>
+    </a>
+
+    <div class="nav-section">Manage</div>
+    <a class="nav-item" href="dashboard.html#users" onclick="scrollToUsers()">
+      <i class="bi bi-people-fill"></i>
+      <span class="nav-label">User Management</span>
+    </a>
+
+    <div class="nav-section">View As</div>
+    <a class="nav-item" href="staff-dashboard.html">
+      <i class="bi bi-person-badge-fill"></i>
+      <span class="nav-label">Staff View</span>
+    </a>
+    <a class="nav-item" href="customer-home.html">
+      <i class="bi bi-bag-heart-fill"></i>
+      <span class="nav-label">Customer View</span>
+    </a>
+    <a class="nav-item" href="trust-profile.html">
+      <i class="bi bi-shield-check"></i>
+      <span class="nav-label">My Trust Profile</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarUserName">Loading...</div>
+        <div class="sidebar-user-role">Administrator</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">
+      <i class="bi bi-box-arrow-left"></i> Sign Out
+    </button>
+  </div>
+</div>
+
+
+<!--  MAIN CONTENT  -->
+<div class="main-content">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title"><i class="bi bi-shop-window" style="color:var(--gold-dark);margin-right:.35rem;"></i>Urban Plate</div>
+      <div class="topbar-divider"></div>
+      <div class="breadcrumb">
+        <i class="bi bi-house-fill"></i>
+        <i class="bi bi-chevron-right"></i>
+        <span>Admin Dashboard</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-topbar" onclick="openAddModal()">
+        <i class="bi bi-person-plus-fill"></i> Add User
+      </button>
+      <div class="user-chip" id="userChip">
+        <div class="avatar" id="topAvatar">A</div>
+        <span class="uname" id="topName">Admin</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page body -->
+  <div class="page-body">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+      <div class="welcome-content">
+        <h2 id="welcomeMsg">Welcome back, <span>Admin</span></h2>
+        <p>You have full access to manage users, view all dashboards and system data.</p>
+        <div class="welcome-badge">
+          <i class="bi bi-shield-fill-check"></i> Administrator Access
+        </div>
+      </div>
+      <div class="welcome-right"><i class="bi bi-people-fill" style="font-size:4.5rem;color:var(--gold);"></i></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon gold"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statTotal">—</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="bi bi-shield-fill-check"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statAdmins">—</div>
+          <div class="stat-label">Admins</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statStaff">—</div>
+          <div class="stat-label">Staff Members</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-bag-heart-fill"></i></div>
+        <div class="stat-info">
+          <div class="stat-value" id="statCustomers">—</div>
+          <div class="stat-label">Customers</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Access -->
+    <div class="section-header">
+      <h2>Quick Access</h2>
+    </div>
+    <div class="quick-nav">
+      <a class="quick-card" href="staff-dashboard.html">
+        <div class="qicon"><i class="bi bi-person-badge-fill"></i></div>
+        <div class="qtitle">Staff Dashboard</div>
+        <div class="qdesc">View staff operations</div>
+      </a>
+      <a class="quick-card" href="customer-home.html">
+        <div class="qicon"><i class="bi bi-bag-heart-fill"></i></div>
+        <div class="qtitle">Customer Home</div>
+        <div class="qdesc">See customer view</div>
+      </a>
+      <a class="quick-card" href="trust-profile.html">
+        <div class="qicon"><i class="bi bi-shield-fill-check"></i></div>
+        <div class="qtitle">Trust Profile</div>
+        <div class="qdesc">View your trust score</div>
+      </a>
+      <div class="quick-card" onclick="openAddModal()">
+        <div class="qicon"><i class="bi bi-person-plus-fill"></i></div>
+        <div class="qtitle">Add New User</div>
+        <div class="qdesc">Create staff or admin</div>
+      </div>
+      <div class="quick-card" onclick="loadUsers()">
+        <div class="qicon"><i class="bi bi-arrow-clockwise"></i></div>
+        <div class="qtitle">Refresh Data</div>
+        <div class="qdesc">Reload user list</div>
+      </div>
+    </div>
+
+    <!-- User Table -->
+    <div class="section-header" id="users">
+      <h2>User Management</h2>
+      <button class="btn-topbar" onclick="openAddModal()">
+        <i class="bi bi-person-plus-fill"></i> Add User
+      </button>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-head">
+        <span class="table-card-head-title"><i class="bi bi-people" style="color:var(--gold-dark);margin-right:.4rem;"></i>All Users</span>
+        <span class="table-card-head-count" id="userCount"></span>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="bi bi-search si"></i>
+          <input type="text" class="form-control" id="searchInput" placeholder="Search name or email…" oninput="filterTable()">
+        </div>
+        <select class="filter-sel" id="roleFilter" onchange="filterTable()">
+          <option value="">All Roles</option>
+          <option value="ADMIN">Admin</option>
+          <option value="STAFF">Staff</option>
+          <option value="CUSTOMER">Customer</option>
+        </select>
+        <select class="filter-sel" id="statusFilter" onchange="filterTable()">
+          <option value="">All Status</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>Telephone</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTbody">
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">
+                  <i class="bi bi-hourglass-split"></i>
+                  Loading users…
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main-content -->
+
+
+<!--  ADD USER MODAL  -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-title-icon"><i class="bi bi-person-plus-fill"></i></div>
+        <h3 class="modal-title">Add New User</h3>
+      </div>
+      <button class="modal-close" onclick="closeModal('addModal')"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div id="addAlert" class="modal-alert"></div>
+
+    <div class="form-row2">
+      <div class="form-group">
+        <label><i class="bi bi-person-circle"></i>First Name <span class="req">*</span></label>
+        <div class="input-wrap">
+          <i class="bi bi-person-circle input-icon"></i>
+          <input type="text" id="add_fn" class="form-control" placeholder="John">
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="bi bi-person-circle"></i>Last Name <span class="req">*</span></label>
+        <div class="input-wrap">
+          <i class="bi bi-person-circle input-icon"></i>
+          <input type="text" id="add_ln" class="form-control" placeholder="Doe">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label><i class="bi bi-envelope-at"></i>Email <span class="req">*</span></label>
+      <div class="input-wrap">
+        <i class="bi bi-envelope-at input-icon"></i>
+        <input type="email" id="add_email" class="form-control" placeholder="john@example.com">
+      </div>
+    </div>
+
+    <div class="form-row2">
+      <div class="form-group">
+        <label><i class="bi bi-person-badge"></i>Role <span class="req">*</span></label>
+        <div class="input-wrap">
+          <i class="bi bi-person-badge input-icon"></i>
+          <select id="add_role" class="form-control">
+            <option value="CUSTOMER">Customer</option>
+            <option value="STAFF">Staff</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="bi bi-telephone"></i>Telephone</label>
+        <div class="input-wrap">
+          <i class="bi bi-telephone input-icon"></i>
+          <input type="tel" id="add_tel" class="form-control" placeholder="077 123 4567">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label><i class="bi bi-geo-alt"></i>Address</label>
+      <div class="input-wrap">
+        <i class="bi bi-geo-alt input-icon"></i>
+        <input type="text" id="add_addr" class="form-control" placeholder="123 Main St, Colombo">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label><i class="bi bi-lock"></i>Password <span class="req">*</span></label>
+      <div class="input-wrap">
+        <i class="bi bi-lock input-icon"></i>
+        <input type="password" id="add_pw" class="form-control" placeholder="Min. 6 characters">
+        <span class="toggle-pw" onclick="togglePassword('add_pw', this)"><i class="bi bi-eye-fill"></i></span>
+      </div>
+    </div>
+
+    <button class="btn-modal-submit" id="addBtn" onclick="addUser()">
+      <div class="spinner"></div>
+      <span class="btn-text"><i class="bi bi-person-check-fill"></i>&nbsp; Create User</span>
+    </button>
+  </div>
+</div>
+
+
+<!--  EDIT USER MODAL  -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-title-icon"><i class="bi bi-pencil-fill"></i></div>
+        <h3 class="modal-title">Edit User</h3>
+      </div>
+      <button class="modal-close" onclick="closeModal('editModal')"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div id="editAlert" class="modal-alert"></div>
+    <input type="hidden" id="edit_id">
+
+    <div class="form-row2">
+      <div class="form-group">
+        <label><i class="bi bi-person-circle"></i>First Name <span class="req">*</span></label>
+        <div class="input-wrap">
+          <i class="bi bi-person-circle input-icon"></i>
+          <input type="text" id="edit_fn" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="bi bi-person-circle"></i>Last Name <span class="req">*</span></label>
+        <div class="input-wrap">
+          <i class="bi bi-person-circle input-icon"></i>
+          <input type="text" id="edit_ln" class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row2">
+      <div class="form-group">
+        <label><i class="bi bi-person-badge"></i>Role <span class="req">*</span></label>
+        <div class="input-wrap">
+          <i class="bi bi-person-badge input-icon"></i>
+          <select id="edit_role" class="form-control">
+            <option value="CUSTOMER">Customer</option>
+            <option value="STAFF">Staff</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="bi bi-toggle-on"></i>Status</label>
+        <div class="input-wrap">
+          <i class="bi bi-toggle-on input-icon"></i>
+          <select id="edit_status" class="form-control">
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label><i class="bi bi-telephone"></i>Telephone</label>
+      <div class="input-wrap">
+        <i class="bi bi-telephone input-icon"></i>
+        <input type="tel" id="edit_tel" class="form-control">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label><i class="bi bi-geo-alt"></i>Address</label>
+      <div class="input-wrap">
+        <i class="bi bi-geo-alt input-icon"></i>
+        <input type="text" id="edit_addr" class="form-control">
+      </div>
+    </div>
+
+    <button class="btn-modal-submit" id="editBtn" onclick="saveEdit()">
+      <div class="spinner"></div>
+      <span class="btn-text"><i class="bi bi-floppy-fill"></i>&nbsp; Save Changes</span>
+    </button>
+  </div>
+</div>
+
+
+<!--  DELETE MODAL  -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal danger-modal">
+    <div class="danger-icon-wrap"><i class="bi bi-person-x-fill"></i></div>
+    <div class="danger-title">Deactivate User?</div>
+    <p class="danger-body">
+      This will deactivate <strong id="deleteUserName"></strong>.<br>
+      They won't be able to sign in until reactivated.
+    </p>
+    <div class="danger-actions">
+      <button class="btn-cancel" onclick="closeModal('deleteModal')">
+        <i class="bi bi-x-circle" style="margin-right:.3rem;"></i>Cancel
+      </button>
+      <button class="btn-deactivate" id="deleteBtn" onclick="confirmDelete()">
+        <div class="spinner"></div>
+        <span class="btn-text"><i class="bi bi-person-dash-fill"></i>&nbsp; Deactivate</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!--  SCRIPTS  -->
+<script src="../JS/app.js"></script>
+<script>
+  let allUsers = [], deleteTargetId = null;
+
+  /* ── Page init ── */
+  window.onload = () => {
+    const s = getSession();
+    if (!s) return window.location.href = 'login.html';
+    if (s.role !== 'ADMIN') return window.location.href = 'login.html';
+
+    const initials = getInitials(s.name);
+    document.getElementById('welcomeMsg').innerHTML = `Welcome back, <span>${s.name}</span>`;
+    document.getElementById('topName').textContent    = s.name;
+    document.getElementById('topAvatar').textContent  = initials;
+    document.getElementById('sidebarAvatar').textContent  = initials;
+    document.getElementById('sidebarUserName').textContent = s.name;
+
+    loadStats();
+    loadUsers();
+  };
+
+  /* ── Load stats ── */
+  async function loadStats() {
+    try {
+      const r = await API.getStats();
+      if (r.success) {
+        document.getElementById('statTotal').textContent     = r.totalUsers;
+        document.getElementById('statAdmins').textContent    = r.totalAdmins;
+        document.getElementById('statStaff').textContent     = r.totalStaff;
+        document.getElementById('statCustomers').textContent = r.totalCustomers;
+      }
+    } catch(e) {}
+  }
+
+  /* ── Load users ── */
+  async function loadUsers() {
+    document.getElementById('userTbody').innerHTML = `
+      <tr><td colspan="7">
+        <div class="empty-state">
+          <i class="bi bi-hourglass-split"></i> Loading users…
+        </div>
+      </td></tr>`;
+    try {
+      const r = await API.getUsers();
+      if (r.success) { allUsers = r.users; renderTable(allUsers); }
+    } catch(e) {
+      document.getElementById('userTbody').innerHTML = `
+        <tr><td colspan="7">
+          <div class="empty-state" style="color:var(--danger);">
+            <i class="bi bi-wifi-off"></i> Connection error. Is backend running?
+          </div>
+        </td></tr>`;
+    }
+  }
+
+  /* ── Render table ── */
+  function renderTable(users) {
+    const countEl = document.getElementById('userCount');
+    countEl.textContent = `${users.length} user${users.length !== 1 ? 's' : ''}`;
+
+    const roleLabel = { ADMIN: 'Admin', STAFF: 'Staff', CUSTOMER: 'Customer' };
+    const roleIcon  = { ADMIN: 'bi-shield-fill-check', STAFF: 'bi-person-badge-fill', CUSTOMER: 'bi-bag-heart-fill' };
+    const avClass   = { ADMIN: 'av-admin', STAFF: 'av-staff', CUSTOMER: 'av-customer' };
+
+    if (!users.length) {
+      document.getElementById('userTbody').innerHTML = `
+        <tr><td colspan="7">
+          <div class="empty-state">
+            <i class="bi bi-search"></i> No users found.
+          </div>
+        </td></tr>`;
+      return;
+    }
+
+    document.getElementById('userTbody').innerHTML = users.map((u, i) => `
+      <tr>
+        <td style="color:var(--text-light);font-size:.82rem;font-weight:500;">${i + 1}</td>
+        <td>
+          <div class="user-cell">
+            <div class="user-avatar-sm ${avClass[u.role] || 'av-customer'}">
+              ${getInitials((u.firstName || '') + ' ' + (u.lastName || ''))}
+            </div>
+            <div class="uinfo">
+              <div class="uname">${u.firstName} ${u.lastName}</div>
+              <div class="uemail">${u.email}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <span class="badge badge-${u.role?.toLowerCase()}">
+            <i class="bi ${roleIcon[u.role] || 'bi-person'}"></i>
+            ${roleLabel[u.role] || u.role}
+          </span>
+        </td>
+        <td style="color:var(--text-light);font-size:.86rem;">${u.telephone || '—'}</td>
+        <td>
+          <span class="badge badge-${u.status?.toLowerCase()}">
+            <i class="bi ${u.status === 'ACTIVE' ? 'bi-check-circle-fill' : 'bi-x-circle-fill'}"></i>
+            ${u.status}
+          </span>
+        </td>
+        <td style="color:var(--text-light);font-size:.82rem;">${formatDate(u.createdAt)}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn-icon" title="Edit user" onclick='openEdit(${JSON.stringify(u)})'>
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="btn-icon danger" title="Deactivate user" onclick="openDelete(${u.id},'${u.firstName} ${u.lastName}')">
+              <i class="bi bi-person-dash-fill"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  /* ── Filter ── */
+  function filterTable() {
+    const q      = document.getElementById('searchInput').value.toLowerCase();
+    const role   = document.getElementById('roleFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    renderTable(allUsers.filter(u =>
+      `${u.firstName} ${u.lastName} ${u.email}`.toLowerCase().includes(q)
+      && (!role   || u.role   === role)
+      && (!status || u.status === status)
+    ));
+  }
+
+  /* ── Add user modal ── */
+  function openAddModal() {
+    ['add_fn','add_ln','add_email','add_tel','add_addr','add_pw'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('add_role').value = 'CUSTOMER';
+    hideAlert(document.getElementById('addAlert'));
+    document.getElementById('addModal').classList.add('active');
+  }
+
+  async function addUser() {
+    const ab  = document.getElementById('addAlert');
+    const btn = document.getElementById('addBtn');
+    const data = {
+      firstName:       document.getElementById('add_fn').value.trim(),
+      lastName:        document.getElementById('add_ln').value.trim(),
+      email:           document.getElementById('add_email').value.trim(),
+      role:            document.getElementById('add_role').value,
+      telephone:       document.getElementById('add_tel').value.trim(),
+      address:         document.getElementById('add_addr').value.trim(),
+      password:        document.getElementById('add_pw').value,
+      confirmPassword: document.getElementById('add_pw').value,
+    };
+    if (!data.firstName || !data.lastName || !data.email || !data.password)
+      return showAlert(ab, 'Please fill in all required fields.', 'error');
+    setLoading(btn, true);
+    try {
+      const r = await API.createUser(data);
+      if (r.success) {
+        showAlert(ab, 'User created successfully!', 'success');
+        setTimeout(() => { closeModal('addModal'); loadUsers(); loadStats(); }, 1200);
+      } else {
+        showAlert(ab, r.message || 'Failed to create user.', 'error');
+      }
+    } catch(e) { showAlert(ab, 'Connection error.', 'error'); }
+    setLoading(btn, false, 'Create User');
+  }
+
+  /* ── Edit user modal ── */
+  function openEdit(u) {
+    document.getElementById('edit_id').value    = u.id;
+    document.getElementById('edit_fn').value    = u.firstName || '';
+    document.getElementById('edit_ln').value    = u.lastName  || '';
+    document.getElementById('edit_role').value   = u.role      || 'CUSTOMER';
+    document.getElementById('edit_status').value = u.status    || 'ACTIVE';
+    document.getElementById('edit_tel').value   = u.telephone || '';
+    document.getElementById('edit_addr').value  = u.address   || '';
+    hideAlert(document.getElementById('editAlert'));
+    document.getElementById('editModal').classList.add('active');
+  }
+
+  async function saveEdit() {
+    const ab  = document.getElementById('editAlert');
+    const btn = document.getElementById('editBtn');
+    const id  = document.getElementById('edit_id').value;
+    const data = {
+      firstName: document.getElementById('edit_fn').value.trim(),
+      lastName:  document.getElementById('edit_ln').value.trim(),
+      role:      document.getElementById('edit_role').value,
+      status:    document.getElementById('edit_status').value,
+      telephone: document.getElementById('edit_tel').value.trim(),
+      address:   document.getElementById('edit_addr').value.trim(),
+    };
+    if (!data.firstName || !data.lastName) return showAlert(ab, 'Name fields are required.', 'error');
+    setLoading(btn, true);
+    try {
+      const r = await API.updateUser(id, data);
+      if (r.success) {
+        showAlert(ab, 'User updated successfully!', 'success');
+        setTimeout(() => { closeModal('editModal'); loadUsers(); loadStats(); }, 1000);
+      } else {
+        showAlert(ab, r.message || 'Failed to update.', 'error');
+      }
+    } catch(e) { showAlert(ab, 'Connection error.', 'error'); }
+    setLoading(btn, false, 'Save Changes');
+  }
+
+  /* ── Delete modal ── */
+  function openDelete(id, name) {
+    deleteTargetId = id;
+    document.getElementById('deleteUserName').textContent = name;
+    document.getElementById('deleteModal').classList.add('active');
+  }
+
+  async function confirmDelete() {
+    const btn = document.getElementById('deleteBtn');
+    btn.disabled = true;
+    btn.classList.add('loading');
+    try {
+      const r = await API.deleteUser(deleteTargetId);
+      closeModal('deleteModal');
+      if (r.success) { loadUsers(); loadStats(); }
+    } catch(e) {}
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    deleteTargetId = null;
+  }
+
+  /* ── Helpers ── */
+  function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(m =>
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); })
+  );
+
+  function scrollToUsers() {
+    document.getElementById('users')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ── Toggle password ── */
+  function togglePassword(fieldId, iconEl) {
+    const input  = document.getElementById(fieldId);
+    const isText = input.type === 'text';
+    input.type   = isText ? 'password' : 'text';
+    const icon   = iconEl.querySelector('i');
+    icon.classList.toggle('bi-eye-fill',       isText);
+    icon.classList.toggle('bi-eye-slash-fill', !isText);
+  }
+
+  /* ── Alert helpers ── */
+  function showAlert(box, msg, type) {
+    box.textContent   = msg;
+    box.className     = `modal-alert ${type}`;
+    box.style.display = 'block';
+  }
+  function hideAlert(box) { box.style.display = 'none'; }
+
+  /* ── Loading state ── */
+  function setLoading(btn, state, label) {
+    btn.disabled = state;
+    btn.classList.toggle('loading', state);
+    if (!state && label) {
+      const icons = {
+        'Create User':   'bi-person-check-fill',
+        'Save Changes':  'bi-floppy-fill',
+        'Deactivate':    'bi-person-dash-fill',
+      };
+      const ic = icons[label] || 'bi-check-circle';
+      btn.querySelector('.btn-text').innerHTML = `<i class="bi ${ic}"></i>&nbsp; ${label}`;
+    }
+  }
+
+  /* ── Logout ── */
+  async function doLogout() {
+    try { await API.logout(); } catch(e) {}
+    clearSession();
+    window.location.href = 'home.html';
+  }
+</script>
+</body>
+</html>
