@@ -20,10 +20,12 @@
       </div>
       <div class="fo-page-links">
         <a class="btn btn-outline" href="order-create.html">Create Order</a>
-        <a class="btn btn-outline" href="orders.html">Order List</a>
+        <a class="btn btn-outline" href="order-management.html">Order Management</a>
+        <a class="btn btn-outline" href="order-history.html">Order History</a>
         <a class="btn btn-primary" href="menu-management.html">Manage Menu</a>
       </div>
     </div>
+    <div id="pageNotice" class="alert" style="display:none;"></div>
 
     <section class="fo-hero">
       <div class="fo-hero-grid">
@@ -35,7 +37,7 @@
         <div class="fo-stats">
           <div class="fo-stat"><strong id="menuItemCount">0 item(s)</strong><span class="fo-muted">Visible menu items</span></div>
           <div class="fo-stat"><strong id="cartCount">0</strong><span class="fo-muted">Items in cart</span></div>
-          <div class="fo-stat"><strong>10%</strong><span class="fo-muted">Backend tax rate</span></div>
+          <div class="fo-stat"><strong id="connectionState">Live API</strong><span id="connectionNote" class="fo-muted">Backend connected</span></div>
         </div>
       </div>
     </section>
@@ -49,15 +51,15 @@
           </div>
         </div>
         <div class="fo-filter-bar">
-          <div class="fo-field"><label for="menuSearch">Search</label><input id="menuSearch" placeholder="Burger, pizza, kottu"></div>
-          <div class="fo-field"><label for="menuCategory">Category</label><select id="menuCategory"></select></div>
-          <div class="fo-field"><label for="menuAvailability">Availability</label><select id="menuAvailability"><option value="">All</option><option value="true">Available</option><option value="false">Unavailable</option></select></div>
-          <div class="fo-field"><label for="menuMinPrice">Min Price</label><input id="menuMinPrice" type="number" min="0" placeholder="0"></div>
-          <div class="fo-field"><label for="menuMaxPrice">Max Price</label><input id="menuMaxPrice" type="number" min="0" placeholder="2500"></div>
+          <div class="fo-field"><label for="menuSearch">Search</label><input id="menuSearch" autocomplete="off" placeholder="Burger, pizza, kottu" oninput="FoodOrdering.applyMenuFilters()"></div>
+          <div class="fo-field"><label for="menuCategory">Category</label><select id="menuCategory" onchange="FoodOrdering.applyMenuFilters()"></select></div>
+          <div class="fo-field"><label for="menuAvailability">Availability</label><select id="menuAvailability" onchange="FoodOrdering.applyMenuFilters()"><option value="">All</option><option value="true">Available</option><option value="false">Unavailable</option></select></div>
+          <div class="fo-field"><label for="menuMinPrice">Min Price</label><input id="menuMinPrice" autocomplete="off" type="number" min="0" placeholder="0" oninput="FoodOrdering.applyMenuFilters()"></div>
+          <div class="fo-field"><label for="menuMaxPrice">Max Price</label><input id="menuMaxPrice" autocomplete="off" type="number" min="0" placeholder="2500" oninput="FoodOrdering.applyMenuFilters()"></div>
         </div>
         <div class="fo-button-row" style="margin-bottom: 1rem;">
           <button class="btn btn-primary" onclick="FoodOrdering.applyMenuFilters()">Apply Filters</button>
-          <button class="btn btn-outline" onclick="window.location.reload()">Reset</button>
+          <button class="btn btn-outline" type="button" onclick="FoodOrdering.clearMenuFilters()">Clear Filters</button>
         </div>
         <div id="menuGrid"></div>
       </section>

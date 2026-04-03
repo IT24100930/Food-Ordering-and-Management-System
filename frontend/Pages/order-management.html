@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Management | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="../CSS/food-ordering.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body class="food-ordering-page" data-page="order-management">
+  <main class="fo-admin-layout">
+    <aside class="fo-admin-sidebar">
+      <div class="fo-admin-brand">
+        <div class="fo-brand-mark"><i class="bi bi-fork-knife"></i></div>
+        <div>
+          <h2>Urban Plate</h2>
+          <p>Restaurant</p>
+        </div>
+      </div>
+
+      <div class="fo-admin-badge">Operations Panel</div>
+
+      <div class="fo-admin-nav-group">
+        <span class="fo-admin-nav-label">Main</span>
+        <a class="fo-admin-nav-item" href="staff-dashboard.html">
+          <i class="bi bi-speedometer2"></i>
+          <span>Dashboard</span>
+        </a>
+      </div>
+
+      <div class="fo-admin-nav-group">
+        <span class="fo-admin-nav-label">Manage</span>
+        <a class="fo-admin-nav-item active" href="order-management.html">
+          <i class="bi bi-receipt-cutoff"></i>
+          <span>Order Management</span>
+        </a>
+        <a class="fo-admin-nav-item" href="order-history.html">
+          <i class="bi bi-clock-history"></i>
+          <span>Order History</span>
+        </a>
+        <a class="fo-admin-nav-item" href="order-create.html">
+          <i class="bi bi-plus-circle"></i>
+          <span>Create Order</span>
+        </a>
+        <a class="fo-admin-nav-item" href="menu-management.html">
+          <i class="bi bi-grid"></i>
+          <span>Menu Management</span>
+        </a>
+        <a class="fo-admin-nav-item" href="menu.html">
+          <i class="bi bi-card-list"></i>
+          <span>Menu View</span>
+        </a>
+      </div>
+
+      <div class="fo-admin-profile">
+        <div class="fo-avatar">SA</div>
+        <div>
+          <strong>System Admin</strong>
+          <span>Operations Manager</span>
+        </div>
+      </div>
+    </aside>
+
+    <section class="fo-admin-content">
+      <header class="fo-admin-topbar">
+        <div class="fo-admin-crumbs">
+          <span><i class="bi bi-house-door"></i> Urban Plate</span>
+          <i class="bi bi-chevron-right"></i>
+          <span>Operations</span>
+          <i class="bi bi-chevron-right"></i>
+          <strong>Order Management</strong>
+        </div>
+        <div class="fo-admin-top-actions">
+          <a class="btn btn-primary" href="order-create.html"><i class="bi bi-plus-circle"></i> Create Order</a>
+          <div class="fo-admin-user-pill">
+            <div class="fo-avatar">SA</div>
+            <span>System Admin</span>
+          </div>
+        </div>
+      </header>
+
+      <div id="pageNotice" class="alert" style="display:none;"></div>
+
+      <section class="fo-admin-hero">
+        <div>
+          <p class="fo-admin-overline">Urban Plate Operations</p>
+          <h1>Welcome back, <span>System Admin</span></h1>
+          <p>Track active orders, move them through the kitchen flow, and jump quickly into create, edit, cancel, or menu tasks.</p>
+          <div class="fo-button-row">
+            <a class="btn btn-primary" href="order-create.html"><i class="bi bi-bag-plus"></i> New Order</a>
+            <a class="btn btn-outline" href="order-history.html">View History</a>
+          </div>
+        </div>
+        <div class="fo-admin-hero-icon">
+          <i class="bi bi-clipboard2-pulse"></i>
+        </div>
+      </section>
+
+      <section class="fo-admin-kpis">
+        <article class="fo-admin-kpi-card amber">
+          <div class="fo-admin-kpi-icon"><i class="bi bi-list-check"></i></div>
+          <div>
+            <strong id="ordersTotal">0</strong>
+            <span>Total Orders</span>
+          </div>
+        </article>
+        <article class="fo-admin-kpi-card blue">
+          <div class="fo-admin-kpi-icon"><i class="bi bi-hourglass-split"></i></div>
+          <div>
+            <strong id="ordersPending">0</strong>
+            <span>Pending Orders</span>
+          </div>
+        </article>
+        <article class="fo-admin-kpi-card green">
+          <div class="fo-admin-kpi-icon"><i class="bi bi-fire"></i></div>
+          <div>
+            <strong id="ordersActive">0</strong>
+            <span>In Progress</span>
+          </div>
+        </article>
+        <article class="fo-admin-kpi-card soft">
+          <div class="fo-admin-kpi-icon"><i class="bi bi-cash-stack"></i></div>
+          <div>
+            <strong id="ordersRevenue">LKR 0.00</strong>
+            <span>Completed Revenue</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="fo-admin-quick-section">
+        <div class="fo-panel-header">
+          <div>
+            <h3>Quick Access</h3>
+            <p class="fo-muted">Use the most common actions without leaving the dashboard.</p>
+          </div>
+        </div>
+        <div class="fo-admin-quick-grid">
+          <a class="fo-admin-quick-card" href="order-create.html">
+            <div class="fo-admin-quick-icon"><i class="bi bi-plus-square"></i></div>
+            <strong>Create Order</strong>
+            <span>Build a new dine-in, takeaway, or delivery order.</span>
+          </a>
+          <a class="fo-admin-quick-card" href="order-history.html">
+            <div class="fo-admin-quick-icon"><i class="bi bi-clock-history"></i></div>
+            <strong>Order History</strong>
+            <span>Review completed and cancelled orders.</span>
+          </a>
+          <a class="fo-admin-quick-card" href="menu-management.html">
+            <div class="fo-admin-quick-icon"><i class="bi bi-grid-3x3-gap"></i></div>
+            <strong>Menu Management</strong>
+            <span>Insert, edit, and disable menu items.</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="fo-admin-board-section">
+        <div class="fo-panel-header">
+          <div>
+            <h3>Live Order Board</h3>
+            <p class="fo-muted">Search and filter orders, then select one to open the live order summary.</p>
+          </div>
+          <div class="fo-compact-filter">
+            <div class="fo-field">
+              <label for="orderSearch">Search</label>
+              <input id="orderSearch" autocomplete="off" placeholder="Order number, customer, phone" oninput="FoodOrdering.loadOrders()">
+            </div>
+            <div class="fo-field">
+              <label for="orderStatusFilter">Status</label>
+              <select id="orderStatusFilter" onchange="FoodOrdering.loadOrders()">
+                <option value="">All</option>
+                <option value="PENDING">PENDING</option>
+                <option value="CONFIRMED">CONFIRMED</option>
+                <option value="PREPARING">PREPARING</option>
+                <option value="READY">READY</option>
+                <option value="COMPLETED">COMPLETED</option>
+                <option value="CANCELLED">CANCELLED</option>
+              </select>
+            </div>
+            <div class="fo-field">
+              <label for="orderTypeFilter">Order Type</label>
+              <select id="orderTypeFilter" onchange="FoodOrdering.loadOrders()">
+                <option value="">All</option>
+                <option value="DINE_IN">DINE_IN</option>
+                <option value="TAKEAWAY">TAKEAWAY</option>
+                <option value="DELIVERY">DELIVERY</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="fo-admin-board-grid">
+          <section class="fo-admin-board-main">
+            <div id="laneTabs" class="fo-lane-tabs"></div>
+            <div id="ordersLane" class="fo-order-lane"></div>
+
+            <div class="fo-panel-header" style="margin-top:1.2rem;">
+              <div>
+                <h3>Menu Overview</h3>
+                <p class="fo-muted">Quick links for the most visible menu items.</p>
+              </div>
+            </div>
+            <div id="boardMenuGrid" class="fo-board-menu-grid"></div>
+          </section>
+
+          <aside class="fo-admin-board-aside">
+            <div class="fo-admin-connection-card">
+              <strong id="connectionState">Live API</strong>
+              <span id="connectionNote">Backend connected</span>
+            </div>
+            <div id="orderSummaryPanel" class="fo-admin-summary-panel"></div>
+          </aside>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="../JS/app.js"></script>
+  <script src="../JS/food-ordering.js"></script>
+</body>
+</html>

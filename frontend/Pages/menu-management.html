@@ -12,64 +12,90 @@
   <main class="fo-shell">
     <div class="fo-topbar">
       <div class="fo-brand">
-        <div class="fo-brand-mark"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+        <div class="fo-brand-mark"><i class="bi bi-fork-knife"></i></div>
         <div class="fo-brand-text">
-          <h1>Menu Management</h1>
-          <p>Create, edit, disable, and soft delete menu items with backend validation.</p>
+          <h1>Urban Plate</h1>
+          <p>Menu operations and catalogue management</p>
         </div>
       </div>
       <div class="fo-page-links">
-        <a class="btn btn-outline" href="menu.html">Customer Menu</a>
-        <a class="btn btn-outline" href="order-create.html">Create Order</a>
-        <a class="btn btn-primary" href="orders.html">Orders</a>
+        <a class="btn btn-outline" href="order-management.html">Order Management</a>
+        <a class="btn btn-outline" href="order-history.html">Order History</a>
+        <a class="btn btn-primary" href="order-create.html">Create Order</a>
       </div>
     </div>
 
-    <div class="fo-layout">
-      <section class="fo-panel" id="menuEditor">
-        <div class="fo-panel-header">
-          <div>
-            <h3 id="menuFormTitle">Create Menu Item</h3>
-            <p class="fo-muted">The backend enforces required fields, non-negative pricing, and duplicate prevention.</p>
+    <section class="fo-app-frame">
+      <div class="fo-app-header">
+        <div class="fo-searchbar">
+          <i class="bi bi-search"></i>
+          <input placeholder="Search menu items, categories and codes" oninput="document.getElementById('menuManagementTable').scrollIntoView({behavior:'smooth', block:'start'})">
+        </div>
+        <div class="fo-userbar">
+          <button class="btn btn-outline"><i class="bi bi-grid"></i></button>
+          <div class="fo-avatar-chip">
+            <div class="fo-avatar">UP</div>
+            <div>
+              <strong>Kitchen Admin</strong>
+              <span>Menu Management</span>
+            </div>
           </div>
         </div>
-        <div id="menuFormAlert" class="alert" style="display:none;"></div>
-        <form id="menuForm" onsubmit="event.preventDefault(); FoodOrdering.saveMenuItem();">
-          <div class="fo-form-grid two">
-            <div class="fo-field"><label for="itemCode">Item Code</label><input id="itemCode" required></div>
-            <div class="fo-field"><label for="itemName">Item Name</label><input id="itemName" required></div>
-          </div>
-          <div class="fo-form-grid two" style="margin-top: 0.9rem;">
-            <div class="fo-field"><label for="itemCategory">Category</label><input id="itemCategory" required></div>
-            <div class="fo-field"><label for="itemImageUrl">Image URL</label><input id="itemImageUrl"></div>
-          </div>
-          <div class="fo-form-grid three" style="margin-top: 0.9rem;">
-            <div class="fo-field"><label for="itemPrice">Price</label><input id="itemPrice" type="number" min="0" step="0.01" required></div>
-            <div class="fo-field"><label for="itemCostPrice">Cost Price</label><input id="itemCostPrice" type="number" min="0" step="0.01"></div>
-            <div class="fo-field"><label for="itemPrepTime">Preparation Time</label><input id="itemPrepTime" type="number" min="0" step="1"></div>
-          </div>
-          <div class="fo-form-grid two" style="margin-top: 0.9rem;">
-            <div class="fo-field"><label for="itemStockQty">Stock Quantity</label><input id="itemStockQty" type="number" min="0" step="1"></div>
-            <div class="fo-field"><label for="itemAvailable">Availability</label><div class="fo-card" style="padding:0.95rem;"><input id="itemAvailable" type="checkbox" checked> Available for ordering</div></div>
-          </div>
-          <div class="fo-field" style="margin-top: 0.9rem;"><label for="itemDescription">Description</label><textarea id="itemDescription"></textarea></div>
-          <div class="fo-button-row" style="margin-top: 1rem;">
-            <button class="btn btn-primary" type="submit">Save Menu Item</button>
-            <button class="btn btn-outline" type="button" onclick="FoodOrdering.clearMenuForm()">Clear Form</button>
-          </div>
-        </form>
-      </section>
+      </div>
 
-      <section class="fo-panel">
-        <div class="fo-panel-header">
-          <div>
-            <h3>Menu Catalogue</h3>
-            <p class="fo-muted">Use edit for full updates, or toggle availability for quick changes.</p>
+      <nav class="fo-tabbar">
+        <a class="fo-tab" href="order-management.html">Order Management</a>
+        <a class="fo-tab" href="order-history.html">Order History</a>
+        <a class="fo-tab active" href="menu-management.html">Menu Management</a>
+        <a class="fo-tab" href="menu.html">Menu View</a>
+      </nav>
+
+      <div class="fo-layout">
+        <section class="fo-board-aside" id="menuEditor">
+          <div class="fo-panel-header">
+            <div>
+              <h3 id="menuFormTitle">Create Menu Item</h3>
+              <p class="fo-muted">Insert, edit, disable, or remove items with validation.</p>
+            </div>
           </div>
-        </div>
-        <div id="menuManagementTable"></div>
-      </section>
-    </div>
+          <div id="menuFormAlert" class="alert" style="display:none;"></div>
+          <form id="menuForm" onsubmit="event.preventDefault(); FoodOrdering.saveMenuItem();">
+            <div class="fo-form-grid two">
+              <div class="fo-field"><label for="itemCode">Item Code</label><input id="itemCode" required></div>
+              <div class="fo-field"><label for="itemName">Item Name</label><input id="itemName" required></div>
+            </div>
+            <div class="fo-form-grid two" style="margin-top:0.9rem;">
+              <div class="fo-field"><label for="itemCategory">Category</label><input id="itemCategory" required></div>
+              <div class="fo-field"><label for="itemImageUrl">Image URL</label><input id="itemImageUrl"></div>
+            </div>
+            <div class="fo-form-grid three" style="margin-top:0.9rem;">
+              <div class="fo-field"><label for="itemPrice">Price</label><input id="itemPrice" type="number" min="0" step="0.01" required></div>
+              <div class="fo-field"><label for="itemCostPrice">Cost Price</label><input id="itemCostPrice" type="number" min="0" step="0.01"></div>
+              <div class="fo-field"><label for="itemPrepTime">Prep Time</label><input id="itemPrepTime" type="number" min="0" step="1"></div>
+            </div>
+            <div class="fo-form-grid two" style="margin-top:0.9rem;">
+              <div class="fo-field"><label for="itemStockQty">Stock Qty</label><input id="itemStockQty" type="number" min="0" step="1"></div>
+              <div class="fo-field"><label for="itemAvailable">Availability</label><div class="fo-card" style="padding:0.95rem;"><input id="itemAvailable" type="checkbox" checked> Available for ordering</div></div>
+            </div>
+            <div class="fo-field" style="margin-top:0.9rem;"><label for="itemDescription">Description</label><textarea id="itemDescription"></textarea></div>
+            <div class="fo-button-row" style="margin-top:1rem;">
+              <button class="btn btn-primary" type="submit">Save Menu Item</button>
+              <button class="btn btn-outline" type="button" onclick="FoodOrdering.clearMenuForm()">Clear Form</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="fo-board-main">
+          <div class="fo-panel-header">
+            <div>
+              <h3>Menu Catalogue</h3>
+              <p class="fo-muted">Card view for faster edits and clearer availability status.</p>
+            </div>
+          </div>
+          <div id="menuManagementTable"></div>
+        </section>
+      </div>
+    </section>
   </main>
   <script src="../JS/app.js"></script>
   <script src="../JS/food-ordering.js"></script>
