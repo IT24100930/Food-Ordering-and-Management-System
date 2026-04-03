@@ -1,39 +1,70 @@
-# Food-Ordering-and-Management-System
+# Food Ordering and Management System
 
-**Frontend**
---------------------------------------------------
-html, CSS, JavaScript, Bootstrap
+Full-stack food ordering project with:
+- Frontend: HTML, CSS, JavaScript, Bootstrap
+- Backend: Spring Boot (Java 17, Maven)
+- Database: Microsoft SQL Server (`food_system`)
 
+## Project Structure
+- `frontend/` static web pages
+- `backend/smart-food-system/` Spring Boot API
+- `DB/profile-&-role-management.sql` SQL schema/updates
 
-**Database**
---------------------------------------------------
-MySQL with SSMS
+## Prerequisites
+- Java 17
+- SQL Server (SQLEXPRESS or any SQL Server instance)
+- SQL Server Management Studio (optional, for GUI)
+- Python 3 (only for serving frontend locally)
 
+## 1. Database Setup
+1. Create a database named `food_system`.
+2. Run the SQL script:
+   `DB/profile-&-role-management.sql`
+3. Update backend DB connection settings in:
+   `backend/smart-food-system/src/main/resources/application.properties`
 
-**Backend**
--------------------------------------------------
-Java -> Springboot
+Current expected DB config:
+```properties
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=food_system;encrypt=false;trustServerCertificate=true
+spring.datasource.username=sa
+spring.datasource.password=135
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+```
 
-Java version 17
+## 2. Run Backend (Spring Boot)
+From repository root:
 
-Project Maven
+```powershell
+cd backend/smart-food-system
+.\mvnw.cmd spring-boot:run
+```
 
-Springboot version 3.5.13
+Backend base URL:
+- `http://localhost:8080/api`
 
-Packages jar
+## 3. Run Frontend
+From repository root:
 
-Project Name -> ** smart-food-system**
+```powershell
+python -m http.server 5500 --directory frontend
+```
 
-**Dependencies**
--------------
-Spring Web
+Open in browser:
+- `http://localhost:5500/Pages/login.html`
 
-Lombok
+## Default Login Users
+The backend seeds default users on first run only when the `users` table is empty.
 
-Spring Data JPA
+- Admin: `admin@urbanplate.com` / `Admin@123`
+- Staff: `staff@urbanplate.com` / `Staff@123`
+- Customer: `customer@example.com` / `Customer@123`
 
-MySQL Driver
-
-Spring Security
+## Notes
+- If users already exist, seeding is skipped.
+- If backend cannot connect to SQL Server, verify:
+  - SQL Server service is running
+  - TCP/IP is enabled for the SQL Server instance
+  - Port/instance in `spring.datasource.url` is correct
+  - SQL credentials in `application.properties` are correct
 
 
