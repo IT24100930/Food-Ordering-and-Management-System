@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Urban Plate – Stock Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div id="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon"><i class="fas fa-utensils"></i></div>
+      <div class="logo-text">
+        <h1>URBAN PLATE</h1>
+        <p>Premium Billing System</p>
+      </div>
+    </div>
+    <div class="currency-chip">
+      <i class="fas fa-right-left"></i>
+      <span>LK LKR – Sri Lankan Rupee</span>
+      <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+    </div>
+    <div class="datetime">
+      <strong id="clock">--:--:--</strong>
+      <span id="datestr"></span>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="tab" onclick="showTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
+    <div class="tab" onclick="showTab('invoices')"><i class="fas fa-file-invoice"></i> Invoices</div>
+    <div class="tab" onclick="showTab('payments')"><i class="fas fa-credit-card"></i> Payments</div>
+    <div class="tab" onclick="showTab('refunds')"><i class="fas fa-rotate-left"></i> Refunds</div>
+    <div class="tab" onclick="showTab('discounts')"><i class="fas fa-tags"></i> Discounts</div>
+    <div class="tab" onclick="showTab('taxes')"><i class="fas fa-bar-chart"></i> Taxes</div>
+    <div class="tab" onclick="showTab('auditlog')"><i class="fas fa-clock-rotate-left"></i> Audit Log</div>
+    <div class="tab" onclick="showTab('database')"><i class="fas fa-database"></i> Database</div>
+    <div class="tab active" onclick="showTab('stock')"><i class="fas fa-boxes-stacked"></i> Stock</div>
+  </div>
+</div>
+
+<!-- ── CONTENT ── -->
+<div id="content">
+
+  <!-- Placeholder tabs (other team members' pages) -->
+  <div class="view" id="view-dashboard"><div class="empty"><i class="fas fa-chart-line"></i><p>Dashboard — part of the main project</p></div></div>
+  <div class="view" id="view-invoices"><div class="empty"><i class="fas fa-file-invoice"></i><p>Invoices — part of the main project</p></div></div>
+  <div class="view" id="view-payments"><div class="empty"><i class="fas fa-credit-card"></i><p>Payments — part of the main project</p></div></div>
+  <div class="view" id="view-refunds"><div class="empty"><i class="fas fa-rotate-left"></i><p>Refunds — part of the main project</p></div></div>
+  <div class="view" id="view-discounts"><div class="empty"><i class="fas fa-tags"></i><p>Discounts — part of the main project</p></div></div>
+  <div class="view" id="view-taxes"><div class="empty"><i class="fas fa-bar-chart"></i><p>Taxes — part of the main project</p></div></div>
+  <div class="view" id="view-auditlog"><div class="empty"><i class="fas fa-clock-rotate-left"></i><p>Audit Log — part of the main project</p></div></div>
+  <div class="view" id="view-database"><div class="empty"><i class="fas fa-database"></i><p>Database — part of the main project</p></div></div>
+
+  <!-- ── STOCK TAB ── -->
+  <div class="view active" id="view-stock">
+
+    <div class="section-title"><i class="fas fa-boxes-stacked"></i> Stock Management</div>
+
+    <!-- Stat Cards -->
+    <div class="stats-row" id="stats-row"></div>
+
+    <!-- Sub-tab Buttons -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="btn" id="stab-items" onclick="showSubTab('items')"><i class="fas fa-boxes-stacked"></i> Stock Items</button>
+      <button class="btn outline" id="stab-alerts" onclick="showSubTab('alerts')">
+        <i class="fas fa-bell"></i> Alerts
+        <span id="alert-count-badge" style="background:#E05050;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;display:none;"></span>
+      </button>
+      <button class="btn outline" id="stab-history" onclick="showSubTab('history')"><i class="fas fa-clock-rotate-left"></i> History</button>
+      <button class="btn outline" id="stab-orders" onclick="showSubTab('orders')"><i class="fas fa-receipt"></i> Orders</button>
+      <div style="margin-left:auto;">
+        <button class="btn outline sm" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Stock Items Sub-tab -->
+    <div id="sub-items">
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="s-search" placeholder="Search in table..." oninput="renderItems()">
+        </div>
+        <select class="sel" id="s-cat" onchange="renderItems()">
+          <option value="">All Categories</option>
+        </select>
+        <select class="sel" id="s-status" onchange="renderItems()">
+          <option value="">All Status</option>
+          <option value="ok">In Stock</option>
+          <option value="low">Low Stock</option>
+        </select>
+        <button class="btn" onclick="openAdd()"><i class="fas fa-plus"></i> Add Item</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Item Name</th>
+              <th>Category</th>
+              <th>Unit</th>
+              <th>Quantity</th>
+              <th>Min Level</th>
+              <th>Price (LKR)</th>
+              <th>Level</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="items-tbody"></tbody>
+        </table>
+      </div>
+      <div style="padding:10px 14px;font-size:11px;color:var(--text-dim);background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;">
+        <i class="fas fa-circle-info"></i> Showing data from Stock Items table
+      </div>
+    </div>
+
+    <!-- Alerts Sub-tab -->
+    <div id="sub-alerts" style="display:none;">
+      <div id="alerts-wrap"></div>
+    </div>
+
+    <!-- History Sub-tab -->
+    <div id="sub-history" style="display:none;">
+      <div class="toolbar">
+        <span style="font-size:13px;color:var(--text-dim);">Full stock change log</span>
+        <button class="btn outline sm" style="margin-left:auto;" onclick="clearHistory()"><i class="fas fa-trash"></i> Clear</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Item</th>
+              <th>Action</th>
+              <th>Change</th>
+              <th>New Qty</th>
+              <th>User</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Orders Sub-tab -->
+    <div id="sub-orders" style="display:none;">
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text-dim);">
+        <i class="fas fa-circle-info"></i> Enter order quantities and confirm. Stock will automatically reduce.
+      </div>
+      <div class="table-wrap" style="margin-bottom:16px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Available</th>
+              <th>Order Qty</th>
+              <th>Unit</th>
+            </tr>
+          </thead>
+          <tbody id="order-tbody"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;">
+        <button class="btn outline" onclick="resetOrder()"><i class="fas fa-rotate-left"></i> Reset</button>
+        <button class="btn" onclick="confirmOrder()"><i class="fas fa-check"></i> Confirm Order</button>
+      </div>
+    </div>
+
+  </div><!-- /view-stock -->
+</div>
+
+<!-- ── ADD / EDIT MODAL ── -->
+<div class="overlay" id="modal-item">
+  <div class="modal">
+    <div class="modal-head"><i class="fas fa-box"></i><span id="modal-title">Add New Item</span></div>
+    <div class="form-row">
+      <div class="fg"><label>Item Name *</label><input id="f-name" placeholder="e.g. Pasta"></div>
+      <div class="fg"><label>Category *</label><input id="f-cat" placeholder="e.g. Food"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Quantity *</label><input id="f-qty" type="number" min="0" placeholder="0"></div>
+      <div class="fg"><label>Unit *</label><input id="f-unit" placeholder="kg / pcs / litre"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Min Stock Level</label><input id="f-min" type="number" min="0" placeholder="5"></div>
+      <div class="fg"><label>Price (LKR)</label><input id="f-price" type="number" min="0" placeholder="0"></div>
+    </div>
+    <div class="fg"><label>Note</label><textarea id="f-note" rows="2" placeholder="Optional..."></textarea></div>
+    <div class="modal-foot">
+      <button class="btn outline" onclick="closeModal('modal-item')">Cancel</button>
+      <button class="btn" onclick="saveItem()"><i class="fas fa-save"></i> Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESTOCK MODAL ── -->
+<div class="overlay" id="modal-restock">
+  <div class="modal">
+    <div class="modal-head"><i class="fas fa-arrow-up"></i> Restock Item</div>
+    <div class="fg"><label>Item</label><input id="rs-name" readonly style="opacity:.55;"></div>
+    <div class="form-row">
+      <div class="fg"><label>Current Qty</label><input id="rs-cur" readonly style="opacity:.55;"></div>
+      <div class="fg"><label>Add Quantity *</label><input id="rs-add" type="number" min="1" placeholder="e.g. 50"></div>
+    </div>
+    <div class="fg"><label>Note</label><input id="rs-note" placeholder="Supplier, reason..."></div>
+    <div class="modal-foot">
+      <button class="btn outline" onclick="closeModal('modal-restock')">Cancel</button>
+      <button class="btn" onclick="doRestock()"><i class="fas fa-check"></i> Confirm Restock</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toasts"></div>
+
+<script src="stock.js"></script>
+</body>
+</html>
