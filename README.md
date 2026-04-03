@@ -36,11 +36,11 @@ From repository root:
 
 ```powershell
 cd backend/smart-food-system
-.\mvnw.cmd spring-boot:run
+.\mvnw.cmd "-Dspring-boot.run.profiles=local" spring-boot:run
 ```
 
 Backend base URL:
-- `http://localhost:8080/api`
+- `http://localhost:8090/api`
 
 ## 3. Run Frontend
 From repository root:
@@ -51,6 +51,10 @@ python -m http.server 5500 --directory frontend
 
 Open in browser:
 - `http://localhost:5500/Pages/login.html`
+
+Local profile notes:
+- Uses embedded H2 DB (file-based) so login works without SQL Server setup.
+- Data is stored under `backend/smart-food-system/data/`.
 
 ## Default Login Users
 The backend seeds default users on first run only when the `users` table is empty.
