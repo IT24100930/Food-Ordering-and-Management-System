@@ -30,6 +30,17 @@
     backendOnline: true,
   };
 
+  const LOCAL_MENU_IMAGE_MAP = {
+    'BRG': '../Images/bugger.png',
+    'PIZ': '../Images/pizza.png',
+    'RIC': '../Images/rice-curry.png',
+    'KOT': '../Images/rice-curry.png',
+    'SEA': '../Images/fish.png',
+    'SAL': '../Images/salad.png',
+    'DRK': '../Images/juice.png',
+    'DES': '../Images/cake.png',
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     const page = document.body.dataset.page;
     if (page === 'menu') initMenuPage();
@@ -62,8 +73,27 @@
     return `<span class="fo-payment ${String(status || '').toLowerCase()}">${escapeHtml(status || '-')}</span>`;
   }
 
+  function resolveMenuImage(item) {
+    const itemCode = String(item?.itemCode || '').toUpperCase();
+    const codePrefix = itemCode.split('-')[0];
+    const category = String(item?.category || '').toLowerCase();
+    const name = String(item?.name || '').toLowerCase();
+
+    if (name.includes('coffee') || name.includes('mocha')) return '../Images/ice-coffee.png';
+    if (name.includes('juice') || name.includes('lime soda')) return '../Images/juice.png';
+    if (name.includes('cake') || name.includes('cheesecake')) return '../Images/cake.png';
+    if (name.includes('salad')) return '../Images/salad.png';
+    if (name.includes('fish') || category.includes('seafood')) return '../Images/fish.png';
+    if (name.includes('pizza') || category.includes('pizza')) return '../Images/pizza.png';
+    if (name.includes('burger') || category.includes('burger')) return '../Images/bugger.png';
+    if (name.includes('rice') || name.includes('kottu') || category.includes('rice') || category.includes('kottu')) return '../Images/rice-curry.png';
+    if (LOCAL_MENU_IMAGE_MAP[codePrefix]) return LOCAL_MENU_IMAGE_MAP[codePrefix];
+
+    return item?.imageUrl || '../Images/pizza.png';
+  }
+
   function menuImage(item) {
-    const src = item.imageUrl || '../Images/pizza.png';
+    const src = resolveMenuImage(item);
     return `<img src="${escapeHtml(src)}" alt="${escapeHtml(item.name)}" onerror="this.onerror=null;this.src='../Images/pizza.png';">`;
   }
 
@@ -133,6 +163,53 @@
     }
     if ($('connectionNote')) {
       $('connectionNote').textContent = state.backendOnline ? 'Backend connected' : 'Using local demo data';
+    }
+    updateOrderSubmitState();
+  }
+
+  function updateOrderSubmitState() {
+    const submitButton = $('submitOrderBtn');
+    if (!submitButton) return;
+
+    const isEdit = Boolean(state.editingOrderId);
+    const lockedOrder = isEdit && state.orderDetail && ['COMPLETED', 'CANCELLED'].includes(state.orderDetail.status);
+
+    if (lockedOrder) {
+      submitButton.disabled = true;
+      submitButton.textContent = `${state.orderDetail.status} Orders Cannot Be Edited`;
+      submitButton.title = 'Only active orders can be edited.';
+      return;
+    }
+
+    if (!state.backendOnline) {
+      submitButton.disabled = true;
+      submitButton.textContent = isEdit ? 'Backend Required To Save' : 'Backend Required To Submit';
+      submitButton.title = 'Start the backend API to save this order.';
+      return;
+    }
+
+    submitButton.disabled = false;
+    submitButton.textContent = isEdit ? 'Save Order Changes' : 'Submit Order';
+    submitButton.title = '';
+  }
+
+  function setOrderEditorLocked(locked, status) {
+    const form = $('orderForm');
+    if (!form) return;
+
+    form.querySelectorAll('input, select, textarea, button').forEach((field) => {
+      if (field.id === 'submitOrderBtn') return;
+      if (field.id === 'latestOrderLink') return;
+      field.disabled = locked;
+    });
+
+    const cartButtons = document.querySelectorAll('#cartList button');
+    cartButtons.forEach((button) => {
+      button.disabled = locked;
+    });
+
+    if (locked) {
+      showAlert($('orderAlert'), `${status} orders cannot be edited`, 'error');
     }
   }
 
@@ -363,6 +440,12 @@
   async function submitOrder() {
     const alertBox = $('orderAlert');
     hideAlert(alertBox);
+
+    if (state.editingOrderId && state.orderDetail && ['COMPLETED', 'CANCELLED'].includes(state.orderDetail.status)) {
+      showAlert(alertBox, `${state.orderDetail.status} orders cannot be edited`);
+      updateOrderSubmitState();
+      return;
+    }
 
     if (!state.backendOnline) {
       showAlert(alertBox, 'Backend is offline. You can browse demo foods and use the cart, but submitting orders needs the API running.', 'info');
@@ -696,9 +779,6 @@
   }
 
   async function initOrderHistoryPage() {
-    if ($('orderStatusFilter') && !$('orderStatusFilter').value) {
-      $('orderStatusFilter').value = 'COMPLETED';
-    }
     await loadOrders();
   }
 
@@ -1106,10 +1186,11 @@
   }
 
   function hydrateOrderEditor(order) {
+    state.orderDetail = order;
     state.editingOrderId = order.id;
     if ($('pageTitle')) $('pageTitle').textContent = `Edit ${order.orderNumber}`;
     if ($('pageSubtitle')) $('pageSubtitle').textContent = 'Update customer details, items, and totals before saving.';
-    if ($('submitOrderBtn')) $('submitOrderBtn').textContent = 'Save Order Changes';
+    updateOrderSubmitState();
 
     $('customerName').value = order.customerName || '';
     $('customerPhone').value = order.customerPhone || '';
@@ -1137,6 +1218,8 @@
       $('latestOrderLink').href = `order-detail.html?id=${order.id}`;
       $('latestOrderLink').style.display = 'inline-flex';
     }
+    setOrderEditorLocked(['COMPLETED', 'CANCELLED'].includes(order.status), order.status);
+    updateOrderSubmitState();
   }
 
   window.FoodOrdering = {

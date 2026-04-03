@@ -42,15 +42,15 @@
     </section>
 
     <section class="fo-panel">
-      <div class="fo-panel-header">
+        <div class="fo-panel-header">
         <div>
           <h3>History</h3>
-          <p class="fo-muted">Defaulted to completed orders. Switch the status filter to review cancelled orders or the full archive.</p>
+          <p class="fo-muted">Review all saved orders here. Use the status filter to narrow the archive to completed, cancelled, or any other stage.</p>
         </div>
       </div>
       <div class="fo-filter-bar">
         <div class="fo-field"><label for="orderSearch">Search</label><input id="orderSearch" placeholder="Order number, customer, phone" oninput="FoodOrdering.loadOrders()"></div>
-        <div class="fo-field"><label for="orderStatusFilter">Status</label><select id="orderStatusFilter" onchange="FoodOrdering.loadOrders()"><option value="COMPLETED">COMPLETED</option><option value="CANCELLED">CANCELLED</option><option value="">All</option></select></div>
+        <div class="fo-field"><label for="orderStatusFilter">Status</label><select id="orderStatusFilter" onchange="FoodOrdering.loadOrders()"><option value="">All</option><option value="PENDING">PENDING</option><option value="CONFIRMED">CONFIRMED</option><option value="PREPARING">PREPARING</option><option value="READY">READY</option><option value="COMPLETED">COMPLETED</option><option value="CANCELLED">CANCELLED</option></select></div>
         <div class="fo-field"><label for="orderTypeFilter">Order Type</label><select id="orderTypeFilter" onchange="FoodOrdering.loadOrders()"><option value="">All</option><option value="DINE_IN">DINE_IN</option><option value="TAKEAWAY">TAKEAWAY</option><option value="DELIVERY">DELIVERY</option></select></div>
       </div>
       <div class="fo-button-row" style="margin: 1rem 0;">

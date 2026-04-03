@@ -787,12 +787,15 @@ body.food-ordering-page {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .fo-card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: auto;
+  height: auto;
+  max-width: 82%;
+  max-height: 82%;
+  object-fit: contain;
 }
 
 .fo-card-body {
@@ -1438,6 +1441,11 @@ body.food-ordering-page {
   .fo-food-card .fo-card-media,
   .fo-card-media {
     height: 120px;
+  }
+
+  .fo-card-media img {
+    max-width: 72%;
+    max-height: 72%;
   }
 
   .fo-button-row .btn {
