@@ -1,82 +1,120 @@
 const API_BASE = 'http://localhost:8090/api';
 
 const API = {
-  // Auth
-  login:          (data) => post('/auth/login', data),
-  register:       (data) => post('/auth/register', data),
-  forgotPassword: (data) => post('/auth/forgot-password', data),
-  resetPassword:  (data) => put('/auth/reset-password', data),
+  login: (data) => request('POST', '/auth/login', data),
+  register: (data) => request('POST', '/auth/register', data),
+  forgotPassword: (data) => request('POST', '/auth/forgot-password', data),
+  resetPassword: (data) => request('PUT', '/auth/reset-password', data),
+  logout: async () => ({ success: true }),
 
-  // Users (CRUD)
-  getUsers:    ()         => get('/users'),
-  getUserById: (id)       => get(`/users/${id}`),
-  getStats:    ()         => get('/users/stats'),
-  createUser:  (data)     => post('/users', data),
-  updateUser:  (id, data) => put(`/users/${id}`, data),
-  deleteUser:  (id)       => del(`/users/${id}`),
+  getUsers: () => request('GET', '/users'),
+  getUserById: (id) => request('GET', `/users/${id}`),
+  getStats: () => request('GET', '/users/stats'),
+  createUser: (data) => request('POST', '/users', data),
+  updateUser: (id, data) => request('PUT', `/users/${id}`, data),
+  deleteUser: (id) => request('DELETE', `/users/${id}`),
+
+  getMenu: (params = {}) => request('GET', `/menu${toQueryString(params)}`),
+  getMenuItem: (id) => request('GET', `/menu/${id}`),
+  createMenuItem: (data) => request('POST', '/menu', data),
+  updateMenuItem: (id, data) => request('PUT', `/menu/${id}`, data),
+  deleteMenuItem: (id) => request('DELETE', `/menu/${id}`),
+  updateMenuAvailability: (id, isAvailable) => request('PATCH', `/menu/${id}/availability`, { isAvailable }),
+  searchMenu: (query) => request('GET', `/menu/search${toQueryString({ query })}`),
+  filterMenu: (params = {}) => request('GET', `/menu/filter${toQueryString(params)}`),
+
+  getOrders: (params = {}) => request('GET', `/orders${toQueryString(params)}`),
+  getOrder: (id) => request('GET', `/orders/${id}`),
+  getOrderItems: (id) => request('GET', `/orders/${id}/items`),
+  createOrder: (data) => request('POST', '/orders', data),
+  updateOrder: (id, data) => request('PUT', `/orders/${id}`, data),
+  updateOrderStatus: (id, status) => request('PATCH', `/orders/${id}/status`, { status }),
+  cancelOrder: (id) => request('DELETE', `/orders/${id}`),
 };
 
-async function get(path) {
-  const res = await fetch(API_BASE + path, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  return res.json();
+async function request(method, path, data) {
+  const options = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
+
+  if (data !== undefined) {
+    options.body = JSON.stringify(data);
+  }
+
+  try {
+    const response = await fetch(API_BASE + path, options);
+    const contentType = response.headers.get('content-type') || '';
+    const payload = contentType.includes('application/json')
+      ? await response.json()
+      : { success: response.ok, message: await response.text() };
+
+    if (!response.ok && !payload.success) {
+      return payload;
+    }
+    if (!response.ok) {
+      return {
+        success: false,
+        message: payload.message || `Request failed with status ${response.status}`,
+        errors: payload.errors || null,
+        data: payload.data || null,
+      };
+    }
+    return payload;
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Unable to reach the backend. Make sure the API is running on http://localhost:8090/api.',
+      errors: [error.message],
+      data: null,
+    };
+  }
 }
 
-async function post(path, data) {
-  const res = await fetch(API_BASE + path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+function toQueryString(params = {}) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      query.set(key, value);
+    }
   });
-  return res.json();
+  const serialized = query.toString();
+  return serialized ? `?${serialized}` : '';
 }
 
-async function put(path, data) {
-  const res = await fetch(API_BASE + path, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
-  return res.json();
-}
-
-async function del(path) {
-  const res = await fetch(API_BASE + path, {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  return res.json();
-}
-
-// Session helpers (stored in sessionStorage)
 function getSession() {
   return JSON.parse(sessionStorage.getItem('sfUser') || 'null');
 }
+
 function setSession(data) {
   sessionStorage.setItem('sfUser', JSON.stringify(data));
 }
+
 function clearSession() {
   sessionStorage.removeItem('sfUser');
 }
 
-// UI helpers
 function showAlert(el, message, type = 'error') {
-  const icons = { error: '⚠️', success: '✅', info: 'ℹ️' };
-  el.innerHTML = `<span>${icons[type]}</span> ${message}`;
+  if (!el) return;
+  const icons = { error: '!', success: 'OK', info: 'i' };
+  el.innerHTML = `<span>${icons[type] || '!'}</span> ${message}`;
   el.className = `alert alert-${type}`;
   el.style.display = 'flex';
 }
 
 function hideAlert(el) {
+  if (!el) return;
   el.style.display = 'none';
 }
 
 function setLoading(btn, loading, text = 'Submit') {
+  if (!btn) return;
   if (loading) {
     btn.disabled = true;
-    btn.innerHTML = `<span class="spinner"></span> Loading...`;
+    btn.innerHTML = '<span class="spinner"></span> Loading...';
   } else {
     btn.disabled = false;
     btn.innerHTML = text;
@@ -85,23 +123,49 @@ function setLoading(btn, loading, text = 'Submit') {
 
 function togglePassword(inputId, iconEl) {
   const input = document.getElementById(inputId);
-  if (input.type === 'password') {
-    input.type = 'text';
-    iconEl.textContent = '🙈';
-  } else {
-    input.type = 'password';
-    iconEl.textContent = '👁️';
+  if (!input) return;
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+  if (iconEl) {
+    iconEl.textContent = isPassword ? 'Hide' : 'Show';
   }
 }
 
 function getInitials(name) {
   if (!name) return '?';
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  return name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 function formatDate(ts) {
   if (!ts) return '-';
   return new Date(ts).toLocaleDateString('en-US', {
-    year: 'numeric', month: 'short', day: 'numeric'
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   });
+}
+
+function formatDateTime(ts) {
+  if (!ts) return '-';
+  return new Date(ts).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+function formatCurrency(value) {
+  const amount = Number(value || 0);
+  return new Intl.NumberFormat('en-LK', {
+    style: 'currency',
+    currency: 'LKR',
+    maximumFractionDigits: 2,
+  }).format(amount);
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Management | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="../CSS/food-ordering.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body class="food-ordering-page" data-page="menu-management">
+  <main class="fo-shell">
+    <div class="fo-topbar">
+      <div class="fo-brand">
+        <div class="fo-brand-mark"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+        <div class="fo-brand-text">
+          <h1>Menu Management</h1>
+          <p>Create, edit, disable, and soft delete menu items with backend validation.</p>
+        </div>
+      </div>
+      <div class="fo-page-links">
+        <a class="btn btn-outline" href="menu.html">Customer Menu</a>
+        <a class="btn btn-outline" href="order-create.html">Create Order</a>
+        <a class="btn btn-primary" href="orders.html">Orders</a>
+      </div>
+    </div>
+
+    <div class="fo-layout">
+      <section class="fo-panel" id="menuEditor">
+        <div class="fo-panel-header">
+          <div>
+            <h3 id="menuFormTitle">Create Menu Item</h3>
+            <p class="fo-muted">The backend enforces required fields, non-negative pricing, and duplicate prevention.</p>
+          </div>
+        </div>
+        <div id="menuFormAlert" class="alert" style="display:none;"></div>
+        <form id="menuForm" onsubmit="event.preventDefault(); FoodOrdering.saveMenuItem();">
+          <div class="fo-form-grid two">
+            <div class="fo-field"><label for="itemCode">Item Code</label><input id="itemCode" required></div>
+            <div class="fo-field"><label for="itemName">Item Name</label><input id="itemName" required></div>
+          </div>
+          <div class="fo-form-grid two" style="margin-top: 0.9rem;">
+            <div class="fo-field"><label for="itemCategory">Category</label><input id="itemCategory" required></div>
+            <div class="fo-field"><label for="itemImageUrl">Image URL</label><input id="itemImageUrl"></div>
+          </div>
+          <div class="fo-form-grid three" style="margin-top: 0.9rem;">
+            <div class="fo-field"><label for="itemPrice">Price</label><input id="itemPrice" type="number" min="0" step="0.01" required></div>
+            <div class="fo-field"><label for="itemCostPrice">Cost Price</label><input id="itemCostPrice" type="number" min="0" step="0.01"></div>
+            <div class="fo-field"><label for="itemPrepTime">Preparation Time</label><input id="itemPrepTime" type="number" min="0" step="1"></div>
+          </div>
+          <div class="fo-form-grid two" style="margin-top: 0.9rem;">
+            <div class="fo-field"><label for="itemStockQty">Stock Quantity</label><input id="itemStockQty" type="number" min="0" step="1"></div>
+            <div class="fo-field"><label for="itemAvailable">Availability</label><div class="fo-card" style="padding:0.95rem;"><input id="itemAvailable" type="checkbox" checked> Available for ordering</div></div>
+          </div>
+          <div class="fo-field" style="margin-top: 0.9rem;"><label for="itemDescription">Description</label><textarea id="itemDescription"></textarea></div>
+          <div class="fo-button-row" style="margin-top: 1rem;">
+            <button class="btn btn-primary" type="submit">Save Menu Item</button>
+            <button class="btn btn-outline" type="button" onclick="FoodOrdering.clearMenuForm()">Clear Form</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="fo-panel">
+        <div class="fo-panel-header">
+          <div>
+            <h3>Menu Catalogue</h3>
+            <p class="fo-muted">Use edit for full updates, or toggle availability for quick changes.</p>
+          </div>
+        </div>
+        <div id="menuManagementTable"></div>
+      </section>
+    </div>
+  </main>
+  <script src="../JS/app.js"></script>
+  <script src="../JS/food-ordering.js"></script>
+</body>
+</html>
