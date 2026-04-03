@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="../CSS/food-ordering.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body class="food-ordering-page" data-page="orders">
+  <main class="fo-shell">
+    <div class="fo-topbar">
+      <div class="fo-brand">
+        <div class="fo-brand-mark"><i class="bi bi-list-check"></i></div>
+        <div class="fo-brand-text">
+          <h1>Orders Overview</h1>
+          <p>Unified list view across all order states. Use Order Management and Order History for day-to-day operation screens.</p>
+        </div>
+      </div>
+      <div class="fo-page-links">
+        <a class="btn btn-outline" href="order-management.html">Order Management</a>
+        <a class="btn btn-outline" href="order-history.html">Order History</a>
+        <a class="btn btn-primary" href="menu-management.html">Menu Admin</a>
+      </div>
+    </div>
+
+    <div class="fo-kpis">
+      <div class="fo-kpi"><strong id="ordersTotal">0</strong><span class="fo-muted">Total Orders</span></div>
+      <div class="fo-kpi"><strong id="ordersPending">0</strong><span class="fo-muted">Pending</span></div>
+      <div class="fo-kpi"><strong id="ordersActive">0</strong><span class="fo-muted">Active Workflow</span></div>
+      <div class="fo-kpi"><strong id="ordersRevenue">LKR 0.00</strong><span class="fo-muted">Completed Revenue</span></div>
+    </div>
+
+    <section class="fo-panel">
+      <div class="fo-panel-header">
+        <div>
+          <h3>Order List</h3>
+          <p class="fo-muted">Filter by customer/order number, workflow status, or order type.</p>
+        </div>
+      </div>
+      <div class="fo-filter-bar">
+        <div class="fo-field"><label for="orderSearch">Search</label><input id="orderSearch" placeholder="Order number, name, phone"></div>
+        <div class="fo-field"><label for="orderStatusFilter">Status</label><select id="orderStatusFilter"><option value="">All</option><option value="PENDING">PENDING</option><option value="CONFIRMED">CONFIRMED</option><option value="PREPARING">PREPARING</option><option value="READY">READY</option><option value="COMPLETED">COMPLETED</option><option value="CANCELLED">CANCELLED</option></select></div>
+        <div class="fo-field"><label for="orderTypeFilter">Order Type</label><select id="orderTypeFilter"><option value="">All</option><option value="DINE_IN">DINE_IN</option><option value="TAKEAWAY">TAKEAWAY</option><option value="DELIVERY">DELIVERY</option></select></div>
+      </div>
+      <div class="fo-button-row" style="margin: 1rem 0;">
+        <button class="btn btn-primary" onclick="FoodOrdering.loadOrders()">Apply Filters</button>
+      </div>
+      <div id="ordersTable"></div>
+    </section>
+  </main>
+  <script src="../JS/app.js"></script>
+  <script src="../JS/food-ordering.js"></script>
+</body>
+</html>

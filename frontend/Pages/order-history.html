@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History | Urban Plate</title>
+  <link rel="stylesheet" href="../CSS/style.css">
+  <link rel="stylesheet" href="../CSS/food-ordering.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body class="food-ordering-page" data-page="order-history">
+  <main class="fo-shell">
+    <div class="fo-topbar">
+      <div class="fo-brand">
+        <div class="fo-brand-mark"><i class="bi bi-clock-history"></i></div>
+        <div class="fo-brand-text">
+          <h1>Order History</h1>
+          <p>Separate history view for completed and cancelled orders, with totals and quick access to full details.</p>
+        </div>
+      </div>
+      <div class="fo-page-links">
+        <a class="btn btn-outline" href="order-management.html">Order Management</a>
+        <a class="btn btn-outline" href="order-create.html">Create Order</a>
+        <a class="btn btn-primary" href="menu-management.html">Menu Management</a>
+      </div>
+    </div>
+    <div id="pageNotice" class="alert" style="display:none;"></div>
+
+    <section class="fo-hero">
+      <div class="fo-hero-grid">
+        <div>
+          <span class="fo-hero-badge"><i class="bi bi-clock-history"></i> Archive View</span>
+          <h2>Review completed and cancelled orders without losing the page flow.</h2>
+          <p>If the backend is offline, this page falls back to demo history so filtering and navigation still work.</p>
+        </div>
+        <div class="fo-stats">
+          <div class="fo-stat"><strong id="ordersTotal">0</strong><span class="fo-muted">Visible orders</span></div>
+          <div class="fo-stat"><strong id="ordersRevenue">LKR 0.00</strong><span class="fo-muted">Visible revenue</span></div>
+          <div class="fo-stat"><strong id="connectionState">Live API</strong><span id="connectionNote" class="fo-muted">Backend connected</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="fo-panel">
+        <div class="fo-panel-header">
+        <div>
+          <h3>History</h3>
+          <p class="fo-muted">Review all saved orders here. Use the status filter to narrow the archive to completed, cancelled, or any other stage.</p>
+        </div>
+      </div>
+      <div class="fo-filter-bar">
+        <div class="fo-field"><label for="orderSearch">Search</label><input id="orderSearch" placeholder="Order number, customer, phone" oninput="FoodOrdering.loadOrders()"></div>
+        <div class="fo-field"><label for="orderStatusFilter">Status</label><select id="orderStatusFilter" onchange="FoodOrdering.loadOrders()"><option value="">All</option><option value="PENDING">PENDING</option><option value="CONFIRMED">CONFIRMED</option><option value="PREPARING">PREPARING</option><option value="READY">READY</option><option value="COMPLETED">COMPLETED</option><option value="CANCELLED">CANCELLED</option></select></div>
+        <div class="fo-field"><label for="orderTypeFilter">Order Type</label><select id="orderTypeFilter" onchange="FoodOrdering.loadOrders()"><option value="">All</option><option value="DINE_IN">DINE_IN</option><option value="TAKEAWAY">TAKEAWAY</option><option value="DELIVERY">DELIVERY</option></select></div>
+      </div>
+      <div class="fo-button-row" style="margin: 1rem 0;">
+        <button class="btn btn-primary" onclick="FoodOrdering.loadOrders()">Apply Filters</button>
+        <button class="btn btn-outline" type="button" onclick="window.location.href='order-history.html'">Reset</button>
+      </div>
+      <div id="ordersTable"></div>
+    </section>
+  </main>
+  <script src="../JS/app.js"></script>
+  <script src="../JS/food-ordering.js"></script>
+</body>
+</html>
